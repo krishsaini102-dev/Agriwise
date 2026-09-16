@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b5d3b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Agriwise — Smart Farm Marketplace</title>
+<style>
+:root{--bg:#edf8f0;--card:rgba(255,255,255,.84);--ink:#123326;--muted:#648073;--green:#0b6b43;--green2:#16a36b;--mint:#d9f5e5;--lime:#b7e875;--gold:#e4b84c;--line:#d7eadf;--shadow:0 18px 45px rgba(15,83,53,.14);--radius:24px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink);background:#08170f}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 10% 10%,rgba(69,194,126,.24),transparent 28%),radial-gradient(circle at 90% 20%,rgba(190,235,113,.2),transparent 25%);}
+button,input,select{font:inherit}
+button{cursor:pointer}
+#app{width:min(440px,100vw);height:100vh;min-height:680px;margin:auto;background:var(--bg);position:relative;overflow:hidden;box-shadow:0 35px 100px rgba(0,0,0,.4)}
+@media(min-width:600px){#app{height:min(930px,94vh);border:8px solid #07130c;border-radius:42px}}
+.screen{display:none;height:100%;overflow:auto;padding-bottom:92px;animation:rise .32s ease}
+.screen.active{display:block}
+.screen:target{display:block}
+body:has(.screen:target) #splash{display:none}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.splash{height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:30px;color:white;background:radial-gradient(circle at 50% 20%,#35bd7d55,transparent 34%),linear-gradient(145deg,#063d28,#0a7148 55%,#123f2c)}
+.logo3d{width:102px;height:102px;border-radius:30px;display:grid;place-items:center;font-size:52px;background:linear-gradient(145deg,#d8f5a7,#7bdc88);box-shadow:inset 8px 8px 18px #ffffff80,inset -10px -12px 18px #2b8d5d55,0 25px 45px #0005;transform:rotate(-4deg);margin-bottom:22px}
+.splash h1{font-size:46px;letter-spacing:-2px;margin:0;font-weight:900}
+.splash p{max-width:320px;color:#d9f7e5;line-height:1.6}
+.tag{padding:8px 13px;border:1px solid #ffffff30;background:#ffffff12;border-radius:999px;font-size:12px;backdrop-filter:blur(12px)}
+.cta{border:0;width:100%;padding:16px 18px;border-radius:18px;background:linear-gradient(135deg,var(--lime),#69d98c);color:#103c27;font-weight:900;box-shadow:0 14px 28px #0a2d1d55;transition:.2s}
+.cta:active{transform:translateY(2px) scale(.99)}
+.header{padding:20px 18px 14px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:5;background:linear-gradient(#edf8f0f5,#edf8f0df);backdrop-filter:blur(18px)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:900;font-size:21px}
+.mini-logo{width:38px;height:38px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(145deg,#d8f5a7,#53c983);box-shadow:inset 3px 3px 7px #fff8,4px 7px 13px #16704722}
+.iconbtn{width:42px;height:42px;border:1px solid var(--line);border-radius:15px;background:var(--card);box-shadow:var(--shadow);color:var(--green)}
+.pad{padding:0 18px}
+.hero{margin:4px 18px 16px;padding:22px;border-radius:28px;color:white;position:relative;overflow:hidden;background:linear-gradient(135deg,#075b39,#11a56b);box-shadow:var(--shadow);transform:perspective(800px) rotateX(1deg)}
+.hero::after{content:"🌿";position:absolute;right:-10px;bottom:-20px;font-size:100px;opacity:.13;transform:rotate(-18deg)}
+.hero h2{font-size:28px;line-height:1.05;margin:5px 0 8px;letter-spacing:-1px}
+.hero p{margin:0;color:#dcf9e8;font-size:13px;line-height:1.5;max-width:290px}
+.section{padding:0 18px;margin:18px 0 10px;display:flex;justify-content:space-between;align-items:center;font-weight:900}
+.section span{font-size:12px;color:var(--green)}
+.card{background:var(--card);border:1px solid #fff;box-shadow:var(--shadow);border-radius:22px;padding:16px;backdrop-filter:blur(16px)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 18px}
+.feature{min-height:116px;position:relative;overflow:hidden;transition:.2s}
+.feature:active{transform:scale(.97)}
+.feature .emoji{font-size:28px}
+.feature b{display:block;margin-top:10px}
+.feature small{display:block;color:var(--muted);margin-top:5px;line-height:1.3}
+.statrow{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;padding:0 18px}
+.stat{text-align:center;padding:13px 7px;background:var(--card);border-radius:18px;border:1px solid white;box-shadow:var(--shadow)}
+.stat b{font-size:20px;color:var(--green)} .stat small{display:block;color:var(--muted);font-size:10px}
+.ticker{display:flex;gap:9px;overflow:auto;padding:0 18px 4px}
+.price{min-width:135px;background:white;border-radius:18px;padding:13px;border:1px solid var(--line);box-shadow:0 10px 24px #16704714}
+.price b{display:block;font-size:17px;margin-top:4px} .up{color:#0b9c5a;font-size:11px} .down{color:#cf6c3c;font-size:11px}
+.bottom{position:absolute;left:10px;right:10px;bottom:10px;height:72px;border-radius:25px;background:#ffffffd9;backdrop-filter:blur(20px);display:grid;grid-template-columns:repeat(5,1fr);border:1px solid #fff;box-shadow:0 18px 40px #093d2750;z-index:20}
+.bottom button{border:0;background:transparent;color:#769087;font-size:10px;font-weight:800;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.bottom button.active{color:var(--green)} .bottom i{font-size:21px;font-style:normal}
+.form{padding:4px 18px 20px}
+label{display:block;font-size:12px;font-weight:800;margin:14px 0 7px;color:#426355}
+input,select{width:100%;padding:14px 14px;border-radius:15px;border:1px solid var(--line);background:#fff;color:var(--ink);outline:none}
+input:focus,select:focus{border-color:#53c983;box-shadow:0 0 0 4px #53c98320}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.backrow{display:flex;align-items:center;gap:10px;padding:18px}
+.backrow h2{margin:0;font-size:21px}
+.profile-photo{width:94px;height:94px;border-radius:28px;object-fit:cover;background:linear-gradient(145deg,#c9efd9,#6ccf93);display:grid;place-items:center;font-size:40px;box-shadow:inset 5px 5px 12px #fff8,8px 12px 24px #0b6b4320}
+.photo-wrap{display:flex;align-items:center;gap:15px;padding:4px 0 12px}
+.photo-btn{display:inline-flex;align-items:center;gap:7px;padding:11px 13px;border-radius:13px;background:var(--mint);color:var(--green);font-weight:800;font-size:12px}
+input[type=file]{display:none}
+.pillrow{display:flex;gap:8px;overflow:auto;padding:0 18px 5px}
+.pill{white-space:nowrap;border:1px solid var(--line);background:white;border-radius:999px;padding:9px 12px;font-size:11px}
+.pill.sel{background:#0b6b43;color:white;border-color:#0b6b43}
+.cropgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;max-height:390px;overflow:auto;padding:0 18px}
+.crop{padding:12px;border:1px solid var(--line);border-radius:14px;background:white;text-align:left;font-size:12px}
+.crop.sel{background:#d9f5e5;border-color:#45bd7d;color:#075b39;font-weight:900}
+.listimg{width:100%;height:145px;object-fit:cover;border-radius:18px;margin-top:10px;background:#dff4e7}
+.listcard{margin:0 18px 12px;background:white;border-radius:21px;padding:14px;border:1px solid var(--line);box-shadow:var(--shadow);display:flex;gap:12px}
+.listcard img{width:76px;height:76px;border-radius:17px;object-fit:cover;background:#e6f5eb}
+.listcard .grow{flex:1}
+.badge{display:inline-block;border-radius:999px;padding:6px 9px;background:#d9f5e5;color:#0b6b43;font-size:10px;font-weight:900}
+.search{margin:0 18px 12px;position:relative} .search input{padding-left:42px}
+.empty{margin:18px;padding:24px;text-align:center;color:var(--muted);border:1px dashed #b9d7c7;border-radius:20px}
+.langbar{display:flex;gap:7px;overflow:auto;padding:10px 18px} .langbar button{white-space:nowrap;border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 10px;font-size:10px} .langbar button.active{background:var(--green);color:white}
+.toast{position:absolute;left:22px;right:22px;bottom:92px;background:#123326;color:#fff;padding:13px 16px;border-radius:16px;text-align:center;opacity:0;transform:translateY(12px);pointer-events:none;transition:.25s;z-index:50;font-size:13px} .toast.show{opacity:1;transform:none}
+.dark{--bg:#081810;--card:#10291d;--ink:#ecfff3;--muted:#9fc0ae;--line:#234737} .dark .header{background:#081810e8} .dark input,.dark select,.dark .crop,.dark .price,.dark .listcard,.dark .pill,.dark .bottom{background:#10291d;color:#ecfff3} .dark .bottom{border-color:#28503d}
+.match{margin:0 18px 12px;padding:16px;border-radius:20px;background:white;border:1px solid var(--line);box-shadow:var(--shadow)} .dark .match{background:#10291d} .match.best{outline:2px solid #58c985} .net{font-size:23px;color:var(--green);font-weight:900}
+.switch{position:relative;width:48px;height:28px;border-radius:20px;background:#cfe6d9;display:inline-block} .switch input{display:none} .switch span{position:absolute;width:22px;height:22px;top:3px;left:3px;border-radius:50%;background:white;transition:.2s;box-shadow:0 2px 5px #0003} .switch input:checked+span{left:23px;background:#83d99c}
+.chat{margin:0 18px;background:white;border-radius:22px;min-height:500px;padding:14px;box-shadow:var(--shadow)} .dark .chat{background:#10291d} .messages{height:390px;overflow:auto;padding:10px} .msg{max-width:78%;padding:10px 13px;border-radius:16px;background:#e5f4eb;margin:7px 0;font-size:13px} .msg.me{margin-left:auto;background:#0b6b43;color:white} .chatrow{display:flex;gap:8px} .chatrow input{flex:1} .chatrow button{width:48px;border:0;border-radius:14px;background:#0b6b43;color:white}
+.notice{margin:0 18px 12px;padding:12px 14px;border-radius:16px;background:#fff8df;border:1px solid #f0df9d;color:#73591a;font-size:11px;line-height:1.4}
+
+@media (min-width: 900px){
+  body{background:linear-gradient(135deg,#06130c,#0b2a1b);overflow:hidden}
+  #app{width:100%;max-width:1440px;height:100vh;min-height:0;margin:0 auto;border:0;border-radius:0;overflow:hidden;background:var(--bg);box-shadow:none}
+  .screen{padding:0 34px 42px 290px;overflow-y:auto;overflow-x:hidden}
+  .screen:not(#splash):not(#login):not(#otp){scrollbar-width:thin}
+  .header{margin:0 -34px 0 -290px;padding:22px 38px 18px 310px;height:82px}
+  .header .brand{font-size:24px}
+  .hero{max-width:1120px;margin:22px auto 24px;padding:34px 38px;border-radius:30px}
+  .hero h2{font-size:38px}
+  .hero p{max-width:700px;font-size:15px}
+  .grid{max-width:1120px;margin:0 auto;grid-template-columns:repeat(4,1fr);gap:18px;padding:0}
+  .feature{min-height:150px;padding:22px}
+  .feature .emoji{font-size:34px}
+  .statrow{max-width:1120px;margin:0 auto;grid-template-columns:repeat(3,1fr);gap:16px;padding:0}
+  .stat{padding:20px}
+  .ticker{max-width:1120px;margin:0 auto;padding:0 0 8px}
+  .price{min-width:170px}
+  .section{max-width:1120px;margin:28px auto 14px;padding:0;font-size:18px}
+  .search{max-width:1120px;margin:0 auto 16px}
+  .listcard,.match,.notice,.empty,.chat{max-width:1120px;margin-left:auto;margin-right:auto}
+  .listcard{padding:18px;min-height:112px}
+  .listcard img{width:92px;height:92px}
+  .form{max-width:900px;margin:0 auto;padding:10px 0 40px}
+  .cropgrid{max-width:1120px;margin:0 auto;grid-template-columns:repeat(5,1fr);max-height:520px;padding:0}
+  .two{grid-template-columns:1fr 1fr;gap:18px}
+  .backrow{max-width:1120px;margin:0 auto;padding:22px 0}
+  .langbar{max-width:1120px;margin:0 auto;padding:12px 0}
+  .bottom{position:absolute;left:18px;top:18px;bottom:18px;right:auto;width:238px;height:auto;border-radius:28px;display:flex;flex-direction:column;justify-content:flex-start;padding:18px 12px;gap:8px;background:rgba(255,255,255,.92);box-shadow:0 20px 55px rgba(0,0,0,.22);border:1px solid #fff;z-index:40}
+  .bottom:before{content:'AGRIWISE';display:block;font-weight:950;font-size:22px;color:var(--green);padding:12px 14px 22px;letter-spacing:-.5px}
+  .bottom button{height:58px;min-height:58px;border-radius:16px;flex-direction:row;justify-content:flex-start;padding:0 15px;gap:13px;font-size:13px}
+  .bottom button.active{background:var(--mint);color:var(--green)}
+  .bottom i{font-size:22px;width:26px;text-align:center}
+  .toast{position:fixed;left:50%;right:auto;bottom:28px;transform:translate(-50%,20px);width:min(460px,calc(100vw - 40px));z-index:100}
+  .toast.show{transform:translate(-50%,0)}
+  .splash{padding:60px}
+  .splash .cta{width:360px}
+  #login .header,#otp .header{margin:0;padding:22px 38px}
+  #login .hero,#otp .hero{max-width:850px;margin-top:55px}
+  #login .form,#otp .form{max-width:650px}
+  .profile-photo{width:120px;height:120px}
+}
+@media (min-width:1200px){
+  .grid{grid-template-columns:repeat(4,1fr)}
+  .cropgrid{grid-template-columns:repeat(6,1fr)}
+}
+@media (min-width:900px) and (max-width:1100px){
+  .screen{padding-left:270px;padding-right:24px}
+  .header{margin-left:-270px;padding-left:290px}
+  .bottom{width:220px}
+  .grid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+
+<style id="desktop-final-polish">
+@media (min-width:900px){
+  html,body{width:100%;min-width:100%;overflow-x:hidden;background:#eef7f0;}
+  body{display:flex;justify-content:center;align-items:stretch;}
+  #app{width:100%;max-width:1600px;margin:0 auto;min-height:100vh;box-sizing:border-box;overflow-x:hidden;}
+  .screen{padding-left:290px!important;padding-right:40px!important;box-sizing:border-box;}
+  .screen > *{max-width:1180px;margin-left:auto!important;margin-right:auto!important;}
+  .screen header,.screen .topbar,.screen .hero,.screen .dashboard-grid,.screen .stats,.screen .cards,.screen .listings-grid,.screen form{width:100%;}
+  .hero{transform:scale(1.015);transform-origin:center top;margin-bottom:10px!important;}
+  .dashboard-grid{gap:24px!important;}
+  .card,.listing-card,.stat,.feature-card,.panel{font-size:1.03rem;}
+  h1{font-size:clamp(32px,3vw,48px)!important;}
+  h2{font-size:28px!important;}
+  h3{font-size:20px!important;}
+  .card{padding:24px!important;}
+  input,select,textarea,button{font-size:16px!important;min-height:48px;}
+  .listing-card{min-height:330px;}
+  .bottom-nav{width:238px!important;}
+}
+@media (min-width:1400px){
+ .screen{padding-left:310px!important;padding-right:55px!important;}
+ .screen > *{max-width:1240px;}
+}
+.find-person-card{display:flex;align-items:center;gap:16px;padding:18px;border-radius:18px;margin:10px 0;}
+.person-avatar{width:58px;height:58px;border-radius:50%;object-fit:cover;flex:0 0 58px;}
+.person-info{flex:1;min-width:0;}
+.person-info strong{font-size:18px;}
+.person-meta{font-size:13px;opacity:.78;margin-top:4px;}
+.person-type{display:inline-block;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:700;margin-top:7px;}
+.person-action{white-space:nowrap;}
+</style>
+
+<style id="desktop-center-large-final">
+@media (min-width:900px){
+  html,body{width:100%;min-width:0;overflow-x:hidden;}
+  body{display:block;background:#eef7f0;}
+  #app{width:100%;max-width:1600px;height:100vh;min-height:100vh;margin:0 auto;border:0;border-radius:0;overflow:hidden;box-sizing:border-box;}
+  /* Center the actual page canvas — no artificial left offset on desktop */
+  .screen{padding:0 64px 64px!important;overflow-y:auto;overflow-x:hidden;box-sizing:border-box;}
+  .screen > *{box-sizing:border-box;max-width:1280px!important;margin-left:auto!important;margin-right:auto!important;}
+  .header{width:calc(100% + 128px)!important;max-width:none!important;margin-left:-64px!important;margin-right:-64px!important;padding:22px 64px 18px!important;height:88px;}
+  .header .brand{font-size:26px;}
+  .brand{gap:12px;}
+  .mini-logo{width:44px;height:44px;border-radius:14px;font-size:20px;}
+  .iconbtn{width:50px;height:50px;border-radius:16px;font-size:20px;}
+  .hero{width:100%;max-width:1280px!important;padding:42px 48px!important;margin:30px auto 32px!important;border-radius:34px;transform:none!important;}
+  .hero h2{font-size:44px!important;line-height:1.08;}
+  .hero p{font-size:17px!important;line-height:1.6;max-width:820px;}
+  .tag{font-size:13px;padding:9px 15px;}
+  .section{font-size:21px!important;margin-top:34px!important;margin-bottom:16px!important;}
+  .section span{font-size:14px;}
+  .grid{width:100%;max-width:1280px!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:24px!important;}
+  .feature{min-height:180px!important;padding:28px!important;border-radius:24px!important;}
+  .feature .emoji{font-size:42px!important;}
+  .feature strong{font-size:18px;}
+  .feature small{font-size:14px;line-height:1.5;}
+  .statrow{width:100%;max-width:1280px!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:22px!important;}
+  .stat{padding:26px!important;min-height:115px;}
+  .stat b{font-size:30px!important;}
+  .stat small{font-size:14px!important;}
+  .ticker{width:100%;max-width:1280px!important;padding-bottom:12px;}
+  .price{min-width:210px!important;padding:20px!important;}
+  .price b{font-size:22px;}
+  .search{width:100%;max-width:1000px!important;margin:0 auto 20px!important;}
+  .listcard,.match,.notice,.empty,.chat{width:100%;max-width:1280px!important;}
+  .listcard{padding:24px!important;min-height:135px!important;border-radius:22px!important;}
+  .listcard img{width:110px!important;height:110px!important;}
+  .form{width:100%;max-width:800px!important;margin:0 auto!important;padding:18px 0 60px!important;}
+  label{font-size:15px!important;}
+  input,select,textarea{font-size:17px!important;min-height:56px!important;padding:15px 17px!important;border-radius:16px!important;}
+  button.cta,.cta{font-size:17px!important;min-height:56px!important;padding:17px 22px!important;}
+  .cropgrid{width:100%;max-width:1280px!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:18px!important;max-height:600px;padding:0;}
+  .two{grid-template-columns:1fr 1fr!important;gap:24px!important;}
+  .backrow{width:100%;max-width:1280px!important;padding:28px 0!important;}
+  .backrow h2{font-size:30px!important;}
+  .profile-photo{width:140px!important;height:140px!important;}
+  /* Login / OTP: centered, larger desktop panels */
+  #login .header,#otp .header{margin-left:-64px!important;margin-right:-64px!important;padding:22px 64px!important;}
+  #login .hero,#otp .hero{max-width:900px!important;margin:70px auto 34px!important;}
+  #login .form,#otp .form{max-width:720px!important;}
+  #login .hero h2,#otp .hero h2{font-size:40px!important;}
+  /* Splash is intentionally centered in the full desktop viewport */
+  .splash{padding:70px!important;justify-content:center!important;align-items:center!important;text-align:center!important;}
+  .splash .logo3d{width:132px;height:132px;font-size:68px;margin-bottom:28px;}
+  .splash h1{font-size:58px!important;}
+  .splash p{font-size:18px;max-width:520px;}
+  .splash .cta{width:390px!important;max-width:390px!important;}
+  /* If desktop navigation is displayed, keep it as a floating rail without pushing the content */
+  .bottom{left:20px!important;top:20px!important;bottom:20px!important;width:235px!important;}
+}
+@media (min-width:1200px){
+  .screen{padding-left:72px!important;padding-right:72px!important;}
+  .header{width:calc(100% + 144px)!important;margin-left:-72px!important;margin-right:-72px!important;padding-left:72px!important;padding-right:72px!important;}
+  .screen > *{max-width:1320px!important;}
+  .grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;}
+}
+@media (min-width:1450px){
+  .screen{padding-left:90px!important;padding-right:90px!important;}
+  .header{width:calc(100% + 180px)!important;margin-left:-90px!important;margin-right:-90px!important;padding-left:90px!important;padding-right:90px!important;}
+  .screen > *{max-width:1360px!important;}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <section id="splash" class="screen active splash">
+    <div class="logo3d">🌾</div><div class="tag">SMART FARM MARKETPLACE</div>
+    <h1>Agriwise</h1><p>Find the highest <b>NET PROFIT</b>, not just the highest price.</p>
+    <a href="#login" onclick="enterAgriwise();return false;" class="cta" role="button" style="max-width:340px;margin-top:25px;text-decoration:none;display:block;text-align:center">Enter Agriwise →</a>
+  </section>
+
+  <section id="login" class="screen">
+  <div class="header"><div class="brand"><div class="mini-logo">🌱</div>Agriwise</div></div>
+  <div class="hero"><div class="tag">SECURE DEMO ACCESS</div><h2>Welcome to Agriwise 👋</h2><p>One account, one marketplace. Farmers and buyers can both explore, list crops/products and connect.</p></div>
+  <div class="form">
+    <label>Mobile number</label>
+    <input id="loginPhone" inputmode="numeric" maxlength="10" placeholder="10-digit mobile number">
+    <div class="notice">🔐 Mobile OTP verification is required before entering Agriwise. No Aadhaar, PAN, bank password or unnecessary sensitive ID is requested.</div>
+    <button class="cta" onclick="sendOTP()">Send OTP & continue →</button>
+  </div>
+</section>
+
+  <section id="otp" class="screen">
+    <div class="backrow"><button class="iconbtn" onclick="show('login')">←</button><h2>Mobile verification</h2></div>
+    <div class="hero"><div class="tag">OTP VERIFICATION</div><h2>Verify your mobile 📱</h2><p>Enter the 6-digit OTP sent to <b id="otpPhone">your mobile</b>.</p></div>
+    <div class="form">
+      <label>6-digit OTP</label>
+      <input id="otpInput" inputmode="numeric" maxlength="6" placeholder="Enter OTP" autocomplete="one-time-code" style="font-size:24px;letter-spacing:8px;text-align:center">
+      <div class="notice" id="otpStatus">A verification code has been generated for this demo.</div>
+      <button class="cta" onclick="verifyOTP()">Verify OTP & Open Agriwise ✓</button>
+      <button class="pill" style="width:100%;margin-top:10px" onclick="sendOTP(true)">Resend OTP</button>
+    </div>
+  </section>
+
+  <section id="home" class="screen">
+  <div class="header"><div class="brand"><div class="mini-logo">🌱</div><span>Agriwise</span></div><div style="display:flex;gap:8px"><button class="iconbtn" onclick="toggleDark()">◐</button><button class="iconbtn" onclick="show('farmerProfile')">👤</button></div></div>
+  <div class="hero"><div class="tag">UNIFIED FARM MARKETPLACE</div><h2 id="welcome">Hello 👋</h2><p>One dashboard for everyone — discover crops/products, list your own produce and connect directly.</p></div>
+  <div class="section">Market snapshot <span onclick="show('market')">See all →</span></div>
+  <div class="ticker" id="ticker"></div>
+  <div class="section">Quick actions</div>
+  <div class="grid" id="homeGrid"></div>
+  <div class="section">Marketplace listings <span onclick="show('crops')">View all →</span></div>
+  <div class="statrow"><div class="stat"><b id="statCrops">0</b><small>My listings</small></div><div class="stat"><b id="statDeals">0</b><small>Connections</small></div><div class="stat"><b>113+</b><small>Crop options</small></div></div>
+  <div class="section">Latest listings</div><div id="recent"></div>
+</section>
+
+  <section id="market" class="screen">
+    <div class="backrow"><button class="iconbtn" onclick="show('home')" data-screen="home">←</button><h2>Market intelligence</h2></div>
+    <div class="search"><input id="marketSearch" oninput="renderMarket()" placeholder="Search crop..."></div><div id="marketList"></div>
+  </section>
+
+  <section id="list" class="screen">
+    <div class="backrow"><button class="iconbtn" onclick="show('home')" data-screen="home">←</button><h2>List your crop</h2></div>
+    <div class="notice">🌿 Add only the details needed to sell your produce. No Aadhaar, PAN, caste, bank password or other unnecessary sensitive data is collected here.</div>
+    <div class="form">
+      <label>Crop</label><select id="cropSelect"></select>
+      <label>Crop image (optional)</label><label class="photo-btn" for="cropImage">📷 Select crop image</label><input id="cropImage" type="file" accept="image/*" onchange="previewImage(this,'cropPreview')"><img id="cropPreview" class="listimg" style="display:none">
+      <div class="two"><div><label>Quantity (kg-based)</label><input id="qty" type="number" min="0.1" step="0.1" value="50"></div><div><label>Unit</label><select id="unit"></select></div></div>
+      <div class="two"><div><label>Quality</label><select id="quality"><option>Grade A — Premium</option><option selected>Grade B — Standard</option><option>Grade C — Basic</option></select></div><div><label>Expected price ₹ / kg</label><input id="expected" type="number" min="0" step="0.01" placeholder="e.g. 24"></div></div>
+      <div class="two"><div><label>Minimum order (kg)</label><input id="minOrder" type="number" min="0.1" step="0.1" value="10"></div><div><label>Harvest date</label><input id="harvestDate" type="date"></div></div>
+      <div class="two"><div><label>Delivery</label><select id="delivery"><option>Pickup from farm</option><option>Seller can deliver</option><option>Buyer arranges transport</option></select></div><div><label>Price</label><select id="negotiable"><option value="yes">Negotiable</option><option value="no">Fixed price</option></select></div></div>
+      <label>Maximum buyer distance: <span id="distVal">150 km</span></label><input id="distance" type="range" min="10" max="500" step="10" value="150" oninput="distVal.textContent=this.value+' km'">
+      <button class="cta" onclick="publishCrop()">Publish crop & find buyers</button>
+    </div>
+  </section>
+
+  <section id="crops" class="screen">
+    <div class="backrow"><button class="iconbtn" onclick="show('home')" data-screen="home">←</button><h2>My marketplace listings</h2><button class="iconbtn" onclick="show('list')" data-screen="list">＋</button></div>
+    <div id="cropListings"></div>
+  </section>
+
+  <section id="matches" class="screen">
+    <div class="backrow"><button class="iconbtn" onclick="show('crops')" data-screen="crops">←</button><h2 id="matchTitle">Buyer matches</h2></div><div id="matchesList"></div>
+  </section>
+
+  <section id="farmerProfile" class="screen">
+    <div class="backrow"><button class="iconbtn" onclick="show('home')" data-screen="home">←</button><h2>Farmer profile</h2></div>
+    <div class="form">
+      <div class="photo-wrap"><div id="farmerPhotoBox" class="profile-photo">🧑‍🌾</div><div><label class="photo-btn" for="farmerImage">📷 Add profile image</label><input id="farmerImage" type="file" accept="image/*" onchange="previewImage(this,'farmerPhotoBox',true)"><div style="font-size:11px;color:var(--muted);margin-top:7px">Optional. Use your own photo/logo.</div></div></div>
+      <label>Full name</label><input id="pName" placeholder="Your name">
+      <div class="two"><div><label>Mobile</label><input id="pPhone" inputmode="numeric" maxlength="10"></div><div><label>Email (optional)</label><input id="pEmail" type="email" placeholder="name@example.com"></div></div>
+      <label>State</label><select id="pState" onchange="loadDistricts('pState','pDistrict')"></select>
+      <label>District</label><select id="pDistrict"></select>
+      <label>Village / Town / City</label><input id="pLocality" placeholder="Village, town or city">
+      <label>PIN code</label><input id="pPin" inputmode="numeric" maxlength="6" placeholder="6-digit PIN">
+      <div class="two"><div><label>Farm area</label><input id="pArea" type="number" min="0" step="0.01"></div><div><label>Area unit</label><select id="pUnit"></select></div></div>
+      <label>Type</label><select id="pType" onchange="toggleProfileType()"><option value="Farmer">🌾 Farmer</option><option value="Buyer">🛒 Buyer</option></select>
+      <div id="farmerSpecs">
+        <label>Primary crops</label><div class="cropgrid" id="profileCrops"></div>
+        <div class="two"><div><label>Farm area</label><input id="pArea2" type="number" min="0" step="0.01" placeholder="Optional"></div><div><label>Experience (years)</label><input id="fExp" type="number" min="0" placeholder="Optional"></div></div>
+      </div>
+      <div id="buyerSpecs" style="display:none">
+        <label>Buyer business / organization</label><input id="bBusiness2" placeholder="Business name">
+        <label>Buyer type</label><select id="bType2"><option>Trader</option><option>Processor</option><option>Wholesaler</option><option>Retailer</option><option>Exporter</option><option>Institutional Buyer</option></select>
+        <label>Products/crops you want to buy</label><div class="cropgrid" id="buyerCrops2"></div>
+        <div class="two"><div><label>Typical purchase quantity (kg)</label><input id="buyQty" type="number" min="1" placeholder="e.g. 500"></div><div><label>Payment terms</label><select id="payTerms"><option>Immediate</option><option>Within 7 days</option><option>Within 15 days</option><option>Within 30 days</option></select></div></div>
+      </div>
+      <label>About / requirements</label><textarea id="pAbout" rows="3" placeholder="Tell others what you grow, buy, or need"></textarea>
+      <button class="cta" onclick="saveFarmer()">Save profile</button>
+    </div>
+  </section>
+
+  <section id="buyerProfile" class="screen">
+    <div class="backrow"><button class="iconbtn" onclick="show('home')" data-screen="home">←</button><h2>Buyer profile</h2></div>
+    <div class="form">
+      <div class="photo-wrap"><div id="buyerPhotoBox" class="profile-photo">🏢</div><div><label class="photo-btn" for="buyerImage">📷 Add business image</label><input id="buyerImage" type="file" accept="image/*" onchange="previewImage(this,'buyerPhotoBox',true)"></div></div>
+      <label>Contact person name</label><input id="bName" placeholder="Your name">
+      <div class="two"><div><label>Mobile</label><input id="bPhone" inputmode="numeric" maxlength="10"></div><div><label>Email (optional)</label><input id="bEmail" type="email"></div></div>
+      <label>Business / organization name</label><input id="bBusiness" placeholder="Business name">
+      <label>Business type</label><select id="bType"><option>Trader</option><option>Processor</option><option>Wholesaler</option><option>Retailer</option><option>Exporter</option><option>Institutional Buyer</option></select>
+      <label>State</label><select id="bState" onchange="loadDistricts('bState','bDistrict')"></select>
+      <label>District</label><select id="bDistrict"></select>
+      <label>City / locality</label><input id="bLocality" placeholder="City / locality">
+      <label>PIN code</label><input id="bPin" inputmode="numeric" maxlength="6">
+      <label>Procurement crops</label><div class="cropgrid" id="buyerCrops"></div>
+      <button class="cta" onclick="saveBuyer()">Save buyer profile</button>
+    </div>
+  </section>
+
+  <section id="farmers" class="screen">
+    <div class="backrow"><button class="iconbtn" onclick="show('home')" data-screen="home">←</button><h2>Find farmers</h2></div>
+    <div class="search"><input id="farmerSearch" oninput="renderFarmers()" placeholder="Search crop, district, farmer..."></div><div id="farmersList"></div>
+  </section>
+
+  <section id="chat" class="screen">
+    <div class="backrow"><button class="iconbtn" onclick="show('home')" data-screen="home">←</button><h2>Communication</h2></div>
+    <div class="chat"><b id="chatTitle">Agriwise marketplace chat</b><div style="font-size:11px;color:var(--muted);margin:5px 0 8px">Discuss crop, quantity, quality, price, logistics and payment terms.</div><div id="messages" class="messages"></div><div class="chatrow"><input id="chatInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendMsg()"><button onclick="sendMsg()">➤</button></div></div>
+  </section>
+
+  <section id="settings" class="screen">
+    <div class="backrow"><button class="iconbtn" onclick="show('home')" data-screen="home">←</button><h2>Agriwise settings</h2></div>
+    <div class="form">
+      <div class="card" style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap"><div><b data-i18n="Appearance">Appearance</b><p style="font-size:12px;color:var(--muted);margin:4px 0 0" data-i18n="Premium dark mode for low-light use.">Premium dark mode for low-light use.</p></div><div style="display:flex;align-items:center;gap:10px"><label class="switch"><input id="darkSwitch" type="checkbox" onchange="setDark(this.checked)"><span></span></label><div style="font-weight:800;font-size:12px">🌐</div><select id="languageSelect" onchange="setLangSelect(this.value)" style="min-width:150px;height:42px;border:1px solid var(--border);border-radius:12px;padding:0 10px;font-weight:700"><option>English</option><option>हिन्दी</option><option>বাংলা</option><option>తెలుగు</option><option>मराठी</option><option>தமிழ்</option><option>ગુજરાતી</option><option>ಕನ್ನಡ</option><option>മലയാളം</option><option>ਪੰਜਾਬੀ</option></select></div></div>
+      <label data-i18n="Language">Language</label><div class="langbar" id="langbar"></div>
+      <div class="notice">Your demo profile, images, listings and chat are stored locally in this browser. Real OTP, cloud database, live mandi APIs and production chat require a backend integration.</div>
+    </div>
+  </section>
+
+  <nav id="bottom" class="bottom" style="display:none">
+    <button data-s="home" onclick="show('home')" data-screen="home"><i>⌂</i>Home</button>
+    <button data-s="market" onclick="show('market')" data-screen="market"><i>📈</i>Market</button>
+    <button data-s="primary" id="bottomPrimary" onclick="show('list')"><i id="bottomPrimaryIcon">＋</i><span id="bottomPrimaryText">List</span></button>
+    <button data-s="secondary" id="bottomSecondary" onclick="show('crops')"><i id="bottomSecondaryIcon">🛒</i><span id="bottomSecondaryText">Listings</span></button>
+    <button data-s="profile" onclick="show('farmerProfile')"><i>👤</i>Profile</button>
+  </nav>
+  <div id="toast" class="toast"></div>
+</div>
+
+<script>
+const STATES={"Andhra Pradesh": ["Alluri Sitharama Raju", "Anakapalli", "Anantapur", "Annamayya", "Bapatla", "Chittoor", "Dr. B. R. Ambedkar Konaseema", "East Godavari", "Eluru", "Guntur", "Kakinada", "Krishna", "Kurnool", "Nandyal", "NTR", "Palnadu", "Parvathipuram Manyam", "Prakasam", "Sri Potti Sriramulu Nellore", "Sri Sathya Sai", "Srikakulam", "Tirupati", "Visakhapatnam", "Vizianagaram", "West Godavari", "YSR Kadapa"], "Arunachal Pradesh": ["Anjaw", "Bichom", "Changlang", "Dibang Valley", "East Kameng", "East Siang", "Itanagar Capital Complex", "Kamle", "Kra Daadi", "Kurung Kumey", "Lepa Rada", "Lohit", "Longding", "Lower Dibang Valley", "Lower Siang", "Lower Subansiri", "Namsai", "Pakke-Kessang", "Papum Pare", "Shi Yomi", "Siang", "Tawang", "Tirap", "Upper Siang", "Upper Subansiri", "West Kameng", "West Siang"], "Assam": ["Baksa", "Bajali", "Barpeta", "Biswanath", "Bongaigaon", "Cachar", "Charaideo", "Chirang", "Darrang", "Dhemaji", "Dhubri", "Dibrugarh", "Dima Hasao", "Goalpara", "Golaghat", "Hailakandi", "Hojai", "Jorhat", "Kamrup", "Kamrup Metropolitan", "Karbi Anglong", "Kokrajhar", "Lakhimpur", "Majuli", "Morigaon", "Nagaon", "Nalbari", "Sivasagar", "Sonitpur", "South Salmara-Mankachar", "Tamulpur", "Tinsukia", "Udalguri", "West Karbi Anglong"], "Bihar": ["Araria", "Arwal", "Aurangabad", "Banka", "Begusarai", "Bhagalpur", "Bhojpur", "Buxar", "Darbhanga", "East Champaran", "Gaya", "Gopalganj", "Jamui", "Jehanabad", "Kaimur", "Katihar", "Khagaria", "Kishanganj", "Lakhisarai", "Madhepura", "Madhubani", "Munger", "Muzaffarpur", "Nalanda", "Nawada", "Patna", "Purnia", "Rohtas", "Saharsa", "Samastipur", "Saran", "Sheikhpura", "Sheohar", "Sitamarhi", "Siwan", "Supaul", "Vaishali", "West Champaran"], "Chhattisgarh": ["Balod", "Baloda Bazar", "Balrampur-Ramanujganj", "Bastar", "Bemetara", "Bijapur", "Bilaspur", "Dantewada", "Dhamtari", "Durg", "Gariaband", "Gaurela-Pendra-Marwahi", "Janjgir-Champa", "Jashpur", "Kabirdham", "Kanker", "Khairagarh-Chhuikhadan-Gandai", "Kondagaon", "Korba", "Korea", "Mahasamund", "Manendragarh-Chirmiri-Bharatpur", "Mohla-Manpur-Ambagarh Chowki", "Mungeli", "Narayanpur", "Raigarh", "Rajnandgaon", "Sakti", "Sarangarh-Bilaigarh", "Sukma", "Surajpur", "Surguja"], "Goa": ["North Goa", "South Goa"], "Gujarat": ["Ahmedabad", "Amreli", "Anand", "Aravalli", "Banaskantha", "Bharuch", "Bhavnagar", "Botad", "Chhota Udaipur", "Dahod", "Dang", "Devbhoomi Dwarka", "Gandhinagar", "Gir Somnath", "Jamnagar", "Junagadh", "Kheda", "Kutch", "Mahisagar", "Mehsana", "Morbi", "Narmada", "Navsari", "Panchmahal", "Patan", "Porbandar", "Rajkot", "Sabarkantha", "Surat", "Surendranagar", "Tapi", "Vadodara", "Valsad"], "Haryana": ["Ambala", "Bhiwani", "Charkhi Dadri", "Faridabad", "Fatehabad", "Gurugram", "Hisar", "Jhajjar", "Jind", "Kaithal", "Karnal", "Kurukshetra", "Mahendragarh", "Nuh", "Palwal", "Panchkula", "Panipat", "Rewari", "Rohtak", "Sirsa", "Sonipat", "Yamunanagar"], "Himachal Pradesh": ["Bilaspur", "Chamba", "Hamirpur", "Kangra", "Kinnaur", "Kullu", "Lahaul and Spiti", "Mandi", "Shimla", "Sirmaur", "Solan", "Una"], "Jharkhand": ["Bokaro", "Chatra", "Deoghar", "Dhanbad", "Dumka", "East Singhbhum", "Garhwa", "Giridih", "Godda", "Gumla", "Hazaribagh", "Jamtara", "Khunti", "Koderma", "Latehar", "Lohardaga", "Pakur", "Palamu", "Ramgarh", "Ranchi", "Sahebganj", "Seraikela Kharsawan", "Simdega", "West Singhbhum"], "Karnataka": ["Bagalkot", "Ballari", "Belagavi", "Bengaluru Rural", "Bengaluru Urban", "Bidar", "Chamarajanagar", "Chikkaballapur", "Chikkamagaluru", "Chitradurga", "Dakshina Kannada", "Davanagere", "Dharwad", "Gadag", "Hassan", "Haveri", "Kalaburagi", "Kodagu", "Kolar", "Koppal", "Mandya", "Mysuru", "Raichur", "Ramanagara", "Shivamogga", "Tumakuru", "Udupi", "Uttara Kannada", "Vijayapura", "Yadgir"], "Kerala": ["Alappuzha", "Ernakulam", "Idukki", "Kannur", "Kasaragod", "Kollam", "Kottayam", "Kozhikode", "Malappuram", "Palakkad", "Pathanamthitta", "Thiruvananthapuram", "Thrissur", "Wayanad"], "Madhya Pradesh": ["Agar Malwa", "Alirajpur", "Anuppur", "Ashoknagar", "Balaghat", "Barwani", "Betul", "Bhind", "Bhopal", "Burhanpur", "Chhatarpur", "Chhindwara", "Damoh", "Datia", "Dewas", "Dhar", "Dindori", "Guna", "Gwalior", "Harda", "Indore", "Jabalpur", "Jhabua", "Katni", "Khandwa", "Khargone", "Maihar", "Mandla", "Mandsaur", "Mauganj", "Morena", "Narmadapuram", "Narsinghpur", "Neemuch", "Niwari", "Pandhurna", "Panna", "Raisen", "Rajgarh", "Ratlam", "Rewa", "Sagar", "Satna", "Sehore", "Seoni", "Shahdol", "Shajapur", "Sheopur", "Shivpuri", "Sidhi", "Singrauli", "Tikamgarh", "Ujjain", "Umaria", "Vidisha"], "Maharashtra": ["Ahmednagar", "Akola", "Amravati", "Beed", "Bhandara", "Buldhana", "Chandrapur", "Chhatrapati Sambhajinagar", "Dharashiv", "Dhule", "Gadchiroli", "Gondia", "Hingoli", "Jalgaon", "Jalna", "Kolhapur", "Latur", "Mumbai City", "Mumbai Suburban", "Nagpur", "Nanded", "Nandurbar", "Nashik", "Palghar", "Parbhani", "Pune", "Raigad", "Ratnagiri", "Sangli", "Satara", "Sindhudurg", "Solapur", "Thane", "Wardha", "Washim", "Yavatmal"], "Manipur": ["Bishnupur", "Chandel", "Churachandpur", "Imphal East", "Imphal West", "Jiribam", "Kakching", "Kamjong", "Kangpokpi", "Noney", "Pherzawl", "Senapati", "Tamenglong", "Tengnoupal", "Thoubal", "Ukhrul"], "Meghalaya": ["East Garo Hills", "East Jaintia Hills", "East Khasi Hills", "Eastern West Khasi Hills", "North Garo Hills", "Ri-Bhoi", "South Garo Hills", "South West Garo Hills", "South West Khasi Hills", "West Garo Hills", "West Jaintia Hills", "West Khasi Hills"], "Mizoram": ["Aizawl", "Champhai", "Hnahthial", "Khawzawl", "Kolasib", "Lawngtlai", "Lunglei", "Mamit", "Saiha", "Saitual", "Serchhip"], "Nagaland": ["Chumoukedima", "Dimapur", "Kiphire", "Kohima", "Longleng", "Meluri", "Mokokchung", "Mon", "Niuland", "Noklak", "Peren", "Phek", "Shamator", "Tseminyu", "Tuensang", "Wokha", "Zunheboto"], "Odisha": ["Angul", "Balangir", "Balasore", "Bargarh", "Bhadrak", "Boudh", "Cuttack", "Deogarh", "Dhenkanal", "Gajapati", "Ganjam", "Jagatsinghpur", "Jajpur", "Jharsuguda", "Kalahandi", "Kandhamal", "Kendrapara", "Kendujhar", "Khordha", "Koraput", "Malkangiri", "Mayurbhanj", "Nabarangpur", "Nayagarh", "Nuapada", "Puri", "Rayagada", "Sambalpur", "Subarnapur", "Sundargarh"], "Punjab": ["Amritsar", "Barnala", "Bathinda", "Faridkot", "Fatehgarh Sahib", "Fazilka", "Ferozepur", "Gurdaspur", "Hoshiarpur", "Jalandhar", "Kapurthala", "Ludhiana", "Malerkotla", "Mansa", "Moga", "Pathankot", "Patiala", "Rupnagar", "Sahibzada Ajit Singh Nagar", "Sangrur", "Shaheed Bhagat Singh Nagar", "Sri Muktsar Sahib", "Tarn Taran"], "Rajasthan": ["Ajmer", "Alwar", "Anupgarh", "Balotra", "Banswara", "Baran", "Barmer", "Beawar", "Bharatpur", "Bhilwara", "Bikaner", "Bundi", "Chittorgarh", "Churu", "Dausa", "Deeg", "Dholpur", "Didwana-Kuchamana", "Dudu", "Dungarpur", "Hanumangarh", "Jaipur", "Jaisalmer", "Jalore", "Jhalawar", "Jhunjhunu", "Jodhpur", "Karauli", "Khairthal-Tijara", "Kota", "Kotputli-Behror", "Nagaur", "Neem Ka Thana", "Pali", "Phalodi", "Pratapgarh", "Rajsamand", "Salumbar", "Sawai Madhopur", "Shahpura", "Sikar", "Sirohi", "Sri Ganganagar", "Tonk", "Udaipur"], "Sikkim": ["Gangtok", "Gyalshing", "Mangan", "Namchi", "Pakyong", "Soreng"], "Tamil Nadu": ["Ariyalur", "Chengalpattu", "Chennai", "Coimbatore", "Cuddalore", "Dharmapuri", "Dindigul", "Erode", "Kallakurichi", "Kancheepuram", "Karur", "Krishnagiri", "Madurai", "Mayiladuthurai", "Nagapattinam", "Namakkal", "Nilgiris", "Perambalur", "Pudukkottai", "Ramanathapuram", "Ranipet", "Salem", "Sivaganga", "Tenkasi", "Thanjavur", "Theni", "Thoothukudi", "Tiruchirappalli", "Tirunelveli", "Tirupathur", "Tiruppur", "Tiruvallur", "Tiruvarur", "Vellore", "Viluppuram", "Virudhunagar"], "Telangana": ["Adilabad", "Bhadradri Kothagudem", "Hanamkonda", "Hyderabad", "Jagtial", "Jangaon", "Jayashankar Bhupalpally", "Jogulamba Gadwal", "Kamareddy", "Karimnagar", "Khammam", "Kumuram Bheem Asifabad", "Mahabubabad", "Mahbubnagar", "Mancherial", "Medak", "Medchal-Malkajgiri", "Mulugu", "Nagarkurnool", "Nalgonda", "Narayanpet", "Nirmal", "Nizamabad", "Peddapalli", "Rajanna Sircilla", "Rangareddy", "Sangareddy", "Siddipet", "Suryapet", "Vikarabad", "Wanaparthy", "Warangal", "Yadadri Bhuvanagiri"], "Tripura": ["Dhalai", "Gomati", "Khowai", "North Tripura", "Sepahijala", "South Tripura", "Unakoti", "West Tripura"], "Uttar Pradesh": ["Agra", "Aligarh", "Ambedkar Nagar", "Amroha", "Auraiya", "Ayodhya", "Azamgarh", "Baghpat", "Bahraich", "Ballia", "Balrampur", "Banda", "Barabanki", "Bareilly", "Bhadohi", "Bijnor", "Budaun", "Bulandshahr", "Chandauli", "Chitrakoot", "Deoria", "Etah", "Etawah", "Farrukhabad", "Fatehpur", "Firozabad", "Gautam Buddha Nagar", "Ghaziabad", "Ghazipur", "Gonda", "Gorakhpur", "Hamirpur", "Hapur", "Hardoi", "Hathras", "Jalaun", "Jaunpur", "Jhansi", "Kannauj", "Kanpur Dehat", "Kanpur Nagar", "Kasganj", "Kaushambi", "Kheri", "Kushinagar", "Lalitpur", "Lucknow", "Maharajganj", "Mahoba", "Mainpuri", "Mathura", "Mau", "Meerut", "Mirzapur", "Moradabad", "Muzaffarnagar", "Pilibhit", "Pratapgarh", "Prayagraj", "Raebareli", "Rampur", "Saharanpur", "Sambhal", "Sant Kabir Nagar", "Shahjahanpur", "Shamli", "Shravasti", "Siddharthnagar", "Sitapur", "Sonbhadra", "Sultanpur", "Unnao", "Varanasi"], "Uttarakhand": ["Almora", "Bageshwar", "Chamoli", "Champawat", "Dehradun", "Haridwar", "Nainital", "Pauri Garhwal", "Pithoragarh", "Rudraprayag", "Tehri Garhwal", "Udham Singh Nagar", "Uttarkashi"], "West Bengal": ["Alipurduar", "Bankura", "Paschim Bardhaman", "Purba Bardhaman", "Birbhum", "Cooch Behar", "Darjeeling", "Hooghly", "Howrah", "Jalpaiguri", "Jhargram", "Kalimpong", "Kolkata", "Maldah", "Murshidabad", "Nadia", "North 24 Parganas", "South 24 Parganas", "Paschim Medinipur", "Purba Medinipur", "Uttar Dinajpur", "Dakshin Dinajpur"], "Andaman and Nicobar Islands": ["Nicobar", "North and Middle Andaman", "South Andaman"], "Chandigarh": ["Chandigarh"], "Dadra and Nagar Haveli and Daman and Diu": ["Dadra and Nagar Haveli", "Daman", "Diu"], "Delhi": ["Central Delhi", "East Delhi", "New Delhi", "North Delhi", "North East Delhi", "North West Delhi", "Shahdara", "South Delhi", "South East Delhi", "South West Delhi", "West Delhi"], "Jammu and Kashmir": ["Anantnag", "Bandipora", "Baramulla", "Budgam", "Doda", "Ganderbal", "Jammu", "Kathua", "Kishtwar", "Kulgam", "Kupwara", "Poonch", "Pulwama", "Rajouri", "Ramban", "Reasi", "Samba", "Shopian", "Srinagar", "Udhampur"], "Ladakh": ["Kargil", "Leh"], "Lakshadweep": ["Agatti", "Amini", "Andrott", "Bitra", "Chetlat", "Kadmat", "Kalpeni", "Kavaratti", "Kiltan", "Minicoy"], "Puducherry": ["Karaikal", "Mahe", "Puducherry", "Yanam"]};
+const CROPS=["Wheat", "Rice", "Cotton", "Tomato", "Onion", "Soybean", "Maize", "Barley", "Pearl Millet", "Sorghum", "Finger Millet", "Foxtail Millet", "Little Millet", "Kodo Millet", "Barnyard Millet", "Proso Millet", "Chickpea", "Pigeon Pea", "Green Gram", "Black Gram", "Lentil", "Field Pea", "Groundnut", "Mustard", "Sunflower", "Sesame", "Linseed", "Castor", "Safflower", "Niger Seed", "Sugarcane", "Jute", "Tobacco", "Potato", "Sweet Potato", "Carrot", "Radish", "Turnip", "Beetroot", "Cabbage", "Cauliflower", "Broccoli", "Brinjal", "Okra", "Green Chilli", "Capsicum", "Cucumber", "Pumpkin", "Bottle Gourd", "Bitter Gourd", "Ridge Gourd", "Sponge Gourd", "Peas", "French Beans", "Cluster Beans", "Garlic", "Ginger", "Turmeric", "Coriander", "Cumin", "Fennel", "Fenugreek", "Ajwain", "Banana", "Mango", "Apple", "Orange", "Guava", "Papaya", "Pomegranate", "Grapes", "Watermelon", "Muskmelon", "Lemon", "Litchi", "Pineapple", "Sapota", "Jackfruit", "Coconut", "Cashew", "Almond", "Walnut", "Raisin", "Tea", "Coffee", "Rubber", "Cardamom", "Black Pepper", "Clove", "Nutmeg", "Mushroom", "Amla", "Ber", "Fig", "Dragon Fruit", "Strawberry", "Kiwi", "Cherry", "Pistachio", "Quinoa", "Buckwheat", "Flax", "Marigold", "Rose", "Jasmine", "Mint", "Basil", "Drumstick", "Moringa", "Curry Leaf", "Tamarind", "Chia", "Isabgol"];
+const UNITS=["Acre","Hectare","Bigha","Biswa","Kanal","Marla","Guntha","Cent","Square Meter","Square Feet"];
+const LIST_UNITS=["kg","gram","tonne","bag","box","piece","litre"];
+const LANGS=["English","हिन्दी","বাংলা","తెలుగు","मराठी","தமிழ்","ગુજરાતી","ಕನ್ನಡ","മലയാളം","ਪੰਜਾਬੀ"];
+const prices={Wheat:2340,Rice:2950,Cotton:6800,Tomato:1450,Onion:1720,Soybean:4380,Maize:2200,Sugarcane:355,Potato:1250,Mustard:5650,Groundnut:6100,Grapes:3200,Mango:4200};
+const buyers=[
+{name:"Bharat Agro Foods",loc:"Karnal, Haryana",crop:"Wheat",distance:120,price:2520,rating:4.8,minQty:20},
+{name:"National Grain Traders",loc:"Delhi NCR",crop:"Wheat",distance:210,price:2600,rating:4.5,minQty:30},
+{name:"Krishna Rice Mills",loc:"Kaithal, Haryana",crop:"Rice",distance:95,price:3080,rating:4.7,minQty:30},
+{name:"FreshMart Processing",loc:"Nashik, Maharashtra",crop:"Tomato",distance:90,price:1620,rating:4.5,minQty:10},
+{name:"Surat Textile Sourcing",loc:"Surat, Gujarat",crop:"Cotton",distance:210,price:7050,rating:4.5,minQty:40},
+{name:"Indore Soy Processors",loc:"Indore, Madhya Pradesh",crop:"Soybean",distance:45,price:4420,rating:4.5,minQty:20},
+{name:"Lasalgaon Onion Traders",loc:"Nashik, Maharashtra",crop:"Onion",distance:15,price:1740,rating:4.6,minQty:20}
+];
+let role=localStorage.getItem("agri_role")||"farmer";
+let pendingPhone=localStorage.getItem("agri_pending_phone")||"";
+let pendingRole=localStorage.getItem("agri_pending_role")||"";
+let otpCode=localStorage.getItem("agri_otp")||"";
+let profile=JSON.parse(localStorage.getItem("agri_profile")||"{}");
+let listings=JSON.parse(localStorage.getItem("agri_listings")||"[]");
+let deals=JSON.parse(localStorage.getItem("agri_deals")||"[]");
+let messages=JSON.parse(localStorage.getItem("agri_messages")||"[]");
+let currentListing=null;
+
+function $(id){return document.getElementById(id)}
+function toast(t){const x=$("toast");x.textContent=t;x.classList.add("show");setTimeout(()=>x.classList.remove("show"),2400)}
+function enterAgriwise(){
+  return show("login");
+}
+function show(id){
+  try {
+    const screens=document.querySelectorAll(".screen");
+    screens.forEach(el=>el.classList.remove("active"));
+    let target=document.getElementById(id);
+    if(id!=="splash"&&id!=="login"&&id!=="otp"&&localStorage.getItem("agri_verified")!=="1"){ target=document.getElementById("login"); id="login"; }
+    if(!target){ toast("Screen not found: "+id); return false; }
+    target.classList.add("active");
+    target.scrollIntoView({block:"start",behavior:"instant"});
+    const bottom=document.getElementById("bottom");
+    if(bottom) bottom.style.display=(id==="splash"||id==="login"||id==="otp")?"none":"grid";
+    const bp=$("bottomPrimaryText"), bi=$("bottomPrimaryIcon"), bs=$("bottomSecondaryText"), bsi=$("bottomSecondaryIcon");
+    if(bp){ bp.textContent="List"; bi.textContent="＋"; bs.textContent="Listings"; bsi.textContent="🛒"; }
+    document.querySelectorAll(".bottom button").forEach(b=>b.classList.toggle("active",b.dataset.s===id));
+    if(id==="home") renderHome();
+    else if(id==="market") renderMarket();
+    else if(id==="crops") renderListings();
+    else if(id==="matches") renderMatches();
+    else if(id==="farmers") renderFarmers();
+    else if(id==="chat") renderChat();
+    else if(id==="farmerProfile") fillFarmerProfile();
+    else if(id==="buyerProfile") fillBuyerProfile();
+    window.scrollTo(0,0);
+    return false;
+  } catch(err){ console.error(err); alert("Agriwise screen open error: "+err.message); return false; }
+}
+function pickRole(){ $("farmerRole").style.outline=role==="farmer"?"3px solid #55c985":"none"; $("buyerRole").style.outline=role==="buyer"?"3px solid #55c985":"none"; }
+function sendOTP(resend=false){
+ const p=$("loginPhone").value.replace(/\D/g,"");
+ if(p.length!==10) return toast("Enter a valid 10-digit mobile number.");
+ role=role||"farmer";
+ pendingPhone=p; pendingRole=role;
+ otpCode=String(Math.floor(100000+Math.random()*900000));
+ localStorage.setItem("agri_pending_phone",p);
+ localStorage.setItem("agri_pending_role",role);
+ localStorage.setItem("agri_otp",otpCode);
+ $("otpPhone").textContent="+91 "+p.slice(0,5)+"*****";
+ $("otpInput").value="";
+ $("otpStatus").innerHTML=resend?"New OTP generated. <b>Demo OTP: "+otpCode+"</b>":"OTP generated. <b>Demo OTP: "+otpCode+"</b>";
+ show("otp");
+}
+function verifyOTP(){
+ const entered=$("otpInput").value.replace(/\D/g,"");
+ const saved=localStorage.getItem("agri_otp")||otpCode;
+ if(entered.length!==6) return toast("Enter the 6-digit OTP.");
+ if(entered!==saved) return toast("Incorrect OTP. Please try again.");
+ const p=pendingPhone||localStorage.getItem("agri_pending_phone");
+ role=pendingRole||localStorage.getItem("agri_pending_role")||"farmer";
+ profile={...profile,phone:p,role};
+ saveProfile(); localStorage.setItem("agri_role",role); localStorage.setItem("agri_verified","1");
+ localStorage.removeItem("agri_otp");
+ toast("Mobile verified successfully ✓");
+ setTimeout(()=>show("home"),250);
+}
+function verify(){ sendOTP(); }
+function saveProfile(){localStorage.setItem("agri_profile",JSON.stringify(profile))}
+function toggleDark(){setDark(!document.body.classList.contains("dark"))}
+function setDark(on){document.body.classList.toggle("dark",on);localStorage.setItem("agri_dark",on?"1":"0");if($("darkSwitch"))$("darkSwitch").checked=on}
+function renderHome(){
+ const n=profile.name||"Agriwise member"; $("welcome").textContent="Hello, "+n+" 👋";
+ $("homeGrid").innerHTML=`
+  <div class="card feature" onclick="show('crops')"><div class="emoji">🛒</div><b>Marketplace</b><small>See all farmer & buyer listings</small></div>
+  <div class="card feature" onclick="show('list')"><div class="emoji">🌾</div><b>List crop / product</b><small>Anyone can publish and sell</small></div>
+  <div class="card feature" onclick="show('market')"><div class="emoji">📈</div><b>Market intelligence</b><small>Compare indicative prices</small></div>
+  <div class="card feature" onclick="show('farmers')"><div class="emoji">🔎</div><b>Find people</b><small>Discover farmers, buyers & listings</small></div>`;
+ $("statCrops").textContent=listings.length; $("statDeals").textContent=deals.length;
+ $("ticker").innerHTML=Object.entries(prices).slice(0,8).map(([c,p],i)=>`<div class="price"><small>${c}</small><b>₹${p}</b><span class="${i%3===0?'down':'up'}">${i%3===0?'▼':'▲'} indicative</span></div>`).join("");
+ $("recent").innerHTML=listings.length?listings.slice(-3).reverse().map(card).join(""):`<div class="empty">No listings yet.<br><br><button class="cta" onclick="show('list')">+ List first crop / product</button></div>`;
+}
+function renderMarket(){
+ const q=($('marketSearch')?.value||'').toLowerCase();
+ const rows=Object.entries(prices).filter(([c])=>c.toLowerCase().includes(q));
+ const cards=rows.map(([c,p])=>{const kg=(p/100).toFixed(2),low=(kg*0.94).toFixed(2),high=(kg*1.08).toFixed(2);return `<div class="listcard"><div class="grow"><b>${c}</b><div style="font-size:11px;color:var(--muted);margin-top:5px">Indicative market reference · price shown per kg</div><div style="font-size:12px;margin-top:7px">Range: ₹${low}–₹${high}/kg</div></div><div style="text-align:right"><b style="font-size:18px">₹${kg}</b><div style="font-size:10px;color:var(--muted)">/ kg</div></div></div>`}).join('');
+ const base=rows.length?rows[0][1]/100:23.4;
+ const trend=[-0.04,-0.02,0.01,0.00,0.03,0.02,0.06,0.04,0.08,0.07,0.11,0.09].map((x,i)=>({d:'D'+(i+1),price:Number((base*(1+x)).toFixed(2))}));
+ const analysis=rows.length?`<div class="card" style="margin-bottom:12px"><b>AI-style market analysis</b><div style="font-size:12px;color:var(--muted);margin-top:7px">${rows[0][0]} is currently shown at ₹${base.toFixed(2)}/kg. Compare nearby buyer offers, transport cost and quality before deciding. The trend below is a demo projection until a live mandi/API source is connected.</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><span class="badge">Price / kg</span><span class="badge">Trend ${trend[trend.length-1].price>=trend[0].price?'↗ rising':'↘ falling'}</span><span class="badge">Net-profit first</span></div></div>`:'';
+ const svg=`<div class="card" style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;align-items:center"><div><b>Live price graph</b><div style="font-size:11px;color:var(--muted)">₹ / kg · demo live stream</div></div><span class="badge">● LIVE</span></div><div id="priceGraph" style="height:210px;margin-top:8px"></div></div>`;
+ const rowsHtml=cards||`<div class="empty">No crop found.</div>`;
+ $('marketList').innerHTML=analysis+svg+rowsHtml; drawMarketGraph(trend); startMarketTicker(base);
+}
+let marketTimer=null;
+function drawMarketGraph(data){const box=$('priceGraph');if(!box)return;const w=box.clientWidth||320,h=190,p=24,vals=data.map(x=>x.price),min=Math.min(...vals)*.97,max=Math.max(...vals)*1.03,pts=data.map((x,i)=>{const X=p+i*(w-2*p)/(data.length-1),Y=h-p-(x-min)*(h-2*p)/(max-min||1);return [X,Y,x.price]}),path=pts.map((a,i)=>(i?'L':'M')+a[0].toFixed(1)+' '+a[1].toFixed(1)).join(' ');box.innerHTML=`<svg viewBox="0 0 ${w} ${h}" width="100%" height="190" role="img" aria-label="Price trend per kilogram"><line x1="${p}" y1="${h-p}" x2="${w-p}" y2="${h-p}" stroke="currentColor" opacity=".15"/><path d="${path}" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="${pts.at(-1)[0]}" cy="${pts.at(-1)[1]}" r="5" fill="currentColor"/><text x="${p}" y="16" font-size="11" fill="currentColor" opacity=".65">₹${max.toFixed(1)}</text><text x="${p}" y="${h-2}" font-size="11" fill="currentColor" opacity=".65">₹${min.toFixed(1)}</text><text x="${w-p-35}" y="${h-2}" font-size="11" fill="currentColor" opacity=".65">Now</text></svg>`}
+function startMarketTicker(base){if(marketTimer)clearInterval(marketTimer);let n=0;marketTimer=setInterval(()=>{const q=($('marketSearch')?.value||'').toLowerCase();if(!$('marketList')||!document.getElementById('market').classList.contains('active'))return; n++;const data=[-0.04,-0.02,0.01,0,.03,.02,.06,.04,.08,.07,.11,.09].map((x,i)=>({d:'D'+(i+1),price:Number((base*(1+x+((n%5)-2)*.004)).toFixed(2))}));drawMarketGraph(data)},2500)}
+
+function fillSelects(){
+ $("cropSelect").innerHTML=CROPS.map(c=>`<option>${c}</option>`).join(""); $("unit").innerHTML=LIST_UNITS.map(u=>`<option>${u}</option>`).join(""); $("pUnit").innerHTML=UNITS.map(u=>`<option>${u}</option>`).join("");
+ $("pState").innerHTML='<option value="">Select state / UT</option>'+Object.keys(STATES).map(s=>`<option>${s}</option>`).join("");
+ $("bState").innerHTML='<option value="">Select state / UT</option>'+Object.keys(STATES).map(s=>`<option>${s}</option>`).join("");
+ $("profileCrops").innerHTML=CROPS.map(c=>`<button type="button" class="crop" data-c="${c}" onclick="this.classList.toggle('sel')">${c}</button>`).join("");
+ $("buyerCrops").innerHTML=CROPS.map(c=>`<button type="button" class="crop" data-c="${c}" onclick="this.classList.toggle('sel')">${c}</button>`).join("");
+ $("langbar").innerHTML=LANGS.map((l,i)=>`<button class="${i===0?'active':''}" onclick="setLang('${l}',this)">${l}</button>`).join("");
+}
+function loadDistricts(stateId,districtId,selected=""){const s=$(stateId).value;$(districtId).innerHTML='<option value="">Select district</option>'+((STATES[s]||[]).map(d=>`<option ${d===selected?'selected':''}>${d}</option>`).join(""));}
+function selectedCrops(id){return [...$(id).querySelectorAll(".sel")].map(x=>x.dataset.c)}
+function fillFarmerProfile(){
+ $("pName").value=profile.name||"";$("pPhone").value=profile.phone||"";$("pEmail").value=profile.email||"";$("pLocality").value=profile.locality||"";$("pPin").value=profile.pin||"";$("pArea").value=profile.area||"";$("pType").value=profile.type||"Individual Farmer";$("pState").value=profile.state||"";loadDistricts("pState","pDistrict",profile.district||"");$("pUnit").value=profile.unit||"Acre";document.querySelectorAll("#profileCrops .crop").forEach(b=>b.classList.toggle("sel",(profile.crops||[]).includes(b.dataset.c)));if(profile.photo){$("farmerPhotoBox").outerHTML=`<img id="farmerPhotoBox" class="profile-photo" src="${profile.photo}">`}else $("farmerPhotoBox").outerHTML='<div id="farmerPhotoBox" class="profile-photo">🧑‍🌾</div>';
+}
+function fillBuyerProfile(){
+ $("bName").value=profile.name||"";$("bPhone").value=profile.phone||"";$("bEmail").value=profile.email||"";$("bBusiness").value=profile.business||"";$("bType").value=profile.businessType||"Trader";$("bLocality").value=profile.locality||"";$("bPin").value=profile.pin||"";$("bState").value=profile.state||"";loadDistricts("bState","bDistrict",profile.district||"");document.querySelectorAll("#buyerCrops .crop").forEach(b=>b.classList.toggle("sel",(profile.crops||[]).includes(b.dataset.c)));if(profile.photo) $("buyerPhotoBox").outerHTML=`<img id="buyerPhotoBox" class="profile-photo" src="${profile.photo}">`;
+}
+function toggleProfileType(){const isB=$("pType").value==="Buyer";$("farmerSpecs").style.display=isB?"none":"block";$("buyerSpecs").style.display=isB?"block":"none";}
+function saveFarmer(){
+ const phone=$("pPhone").value.replace(/\D/g,""),pin=$("pPin").value.replace(/\D/g,"");if(!$("pName").value.trim()||phone.length!==10||!$("pState").value||!$("pDistrict").value||pin.length!==6) return toast("Please complete name, 10-digit mobile, state, district and 6-digit PIN.");
+ const isBuyer=$("pType").value==="Buyer";
+ profile={...profile,role:"user",name:$("pName").value.trim(),phone,email:$("pEmail").value.trim(),state:$("pState").value,district:$("pDistrict").value,locality:$("pLocality").value.trim(),pin,type:$("pType").value,area:$("pArea").value,unit:$("pUnit").value,crops:isBuyer?selectedCrops("buyerCrops2"):selectedCrops("profileCrops"),about:$("pAbout").value.trim(),buyerBusiness:isBuyer?$("bBusiness2").value.trim():"",buyerType:isBuyer?$("bType2").value:"",buyQty:isBuyer?$("buyQty").value:"",paymentTerms:isBuyer?$("payTerms").value:"",farmerExperience:isBuyer?"":$("fExp").value};
+ if(isBuyer&&!profile.buyerBusiness)return toast("Enter buyer business / organization name."); saveProfile();toast("Profile saved ✓");show("home");
+}
+function saveBuyer(){
+ const phone=$("bPhone").value.replace(/\D/g,""),pin=$("bPin").value.replace(/\D/g,"");if(!$("bName").value.trim()||phone.length!==10||!$("bBusiness").value.trim()||!$("bState").value||!$("bDistrict").value||pin.length!==6) return toast("Please complete required buyer profile details.");
+ profile={...profile,role:"user",name:$("bName").value.trim(),phone,email:$("bEmail").value.trim(),business:$("bBusiness").value.trim(),businessType:$("bType").value,state:$("bState").value,district:$("bDistrict").value,locality:$("bLocality").value.trim(),pin,crops:selectedCrops("buyerCrops")};saveProfile();toast("Buyer profile saved ✓");show("home");
+}
+function previewImage(input,target,avatar=false){
+ const f=input.files[0];if(!f)return;if(!f.type.startsWith("image/"))return toast("Please select an image file.");
+ const r=new FileReader();r.onload=e=>{$(target).style.display="";$(target).src?$(target).src=e.target.result:$(target).style.backgroundImage=`url(${e.target.result})`;$(target).style.backgroundSize="cover";$(target).textContent="" ;if(target==="farmerPhotoBox"||target==="buyerPhotoBox"){profile.photo=e.target.result;saveProfile()}};r.readAsDataURL(f);
+}
+function publishCrop(){
+ const crop=$("cropSelect").value,qty=Number($("qty").value),img=$("cropPreview").src||"",unit=$("unit").value; if(!qty||qty<=0)return toast("Enter a valid quantity.");
+ const item={id:Date.now(),crop,qty,unit,quality:$("quality").value,expected:$("expected").value,distance:Number($("distance").value),image:img,status:"Published",listedBy:profile.name||"Agriwise member",minOrder:Number($("minOrder").value)||1,harvestDate:$("harvestDate").value,delivery:$("delivery").value,negotiable:$("negotiable").value};
+ listings.push(item);localStorage.setItem("agri_listings",JSON.stringify(listings));toast(crop+" listing published ✓");currentListing=item.id;show("matches");
+}
+function card(l){
+ return `<div class="listcard">
+   ${l.image?`<img src="${l.image}">`:`<div style="width:76px;height:76px;border-radius:17px;display:grid;place-items:center;background:#e1f4e8;font-size:30px">🌾</div>`}
+   <div class="grow">
+     <b>${l.crop}</b>
+     <div style="font-size:11px;color:var(--muted);margin-top:5px">${l.qty} ${l.unit} · ${l.quality}</div><div style="font-size:10px;color:var(--muted);margin-top:4px">Min order: ${l.minOrder||1} kg · ${l.delivery||'Pickup from farm'} · ${l.negotiable==='no'?'Fixed':'Negotiable'}</div>
+     ${l.expected?`<div style="font-size:12px;margin-top:5px"><b>₹${l.expected}</b> expected</div>`:""}
+     <span class="badge">${l.status||"Published"}</span>
+     <div style="display:flex;gap:7px;margin-top:10px">
+       <button class="pill" onclick="event.stopPropagation();editListing(${l.id})">✏️ Edit</button>
+       <button class="pill" onclick="event.stopPropagation();deleteListing(${l.id})">🗑️ Delete</button>
+       <button class="pill" onclick="event.stopPropagation();currentListing=${l.id};show('matches')">🤝 Match</button>
+     </div>
+   </div>
+ </div>`
+}
+function renderListings(){$("cropListings").innerHTML=listings.length?listings.slice().reverse().map(card).join(""):`<div class="empty">No listings yet.<br><br><button class="cta" onclick="show('list')">+ List crop / product</button></div>`}
+function editListing(id){
+ const l=listings.find(x=>x.id===id); if(!l)return;
+ currentListing=id;
+ $("cropSelect").value=l.crop||CROPS[0]; $("qty").value=l.qty||50; $("unit").value=l.unit||UNITS[0];
+ $("quality").value=l.quality||"Grade B — Standard"; $("expected").value=l.expected||"";
+ $("distance").value=l.distance||150; $("distVal").textContent=($("distance").value)+" km";
+ const prev=$("cropPreview"); if(l.image){prev.src=l.image;prev.style.display="block"}else{prev.removeAttribute("src");prev.style.display="none"}
+ const btn=document.querySelector("#list .cta"); if(btn){btn.textContent="Save listing changes ✓";btn.onclick=saveListingEdit}
+ show("list");
+}
+function saveListingEdit(){
+ const l=listings.find(x=>x.id===currentListing); if(!l)return;
+ const qty=Number($("qty").value); if(!qty||qty<=0)return toast("Enter a valid quantity.");
+ l.crop=$("cropSelect").value;l.qty=qty;l.unit=$("unit").value;l.quality=$("quality").value;l.expected=$("expected").value;
+ l.distance=Number($("distance").value);l.image=$("cropPreview").src||l.image||"";l.status="Published";
+ localStorage.setItem("agri_listings",JSON.stringify(listings));toast("Listing updated ✓");currentListing=null;
+ const btn=document.querySelector("#list .cta");if(btn){btn.textContent="Publish crop / product";btn.onclick=publishCrop}
+ show("crops");
+}
+function deleteListing(id){
+ const l=listings.find(x=>x.id===id);if(!l)return;
+ if(!confirm("Delete this "+l.crop+" listing?"))return;
+ listings=listings.filter(x=>x.id!==id);localStorage.setItem("agri_listings",JSON.stringify(listings));
+ if(currentListing===id)currentListing=null;toast("Listing deleted ✓");renderListings();renderHome();
+}
+function renderMatches(){
+ const l=listings.find(x=>x.id===currentListing)||listings[listings.length-1];if(!l){$("matchesList").innerHTML='<div class="empty">Add a crop first to see buyer matches.</div>';return}
+ $("matchTitle").textContent=l.crop+" — buyer matches";
+ const ms=buyers.filter(b=>b.crop===l.crop&&b.distance<=l.distance&&b.minQty<=l.qty).map(b=>{const transport=b.distance*3.2,net=b.price-transport-25;return{...b,net}}).sort((a,b)=>b.net-a.net);
+ $("matchesList").innerHTML=ms.length?ms.map((b,i)=>`<div class="match ${i===0?'best':''}"><span class="badge">${i===0?'★ Highest estimated net profit':'Good match'}</span><h3 style="margin:9px 0 4px">${b.name}</h3><div style="font-size:11px;color:var(--muted)">${b.loc} · ${b.distance} km · ★ ${b.rating}</div><div style="margin:14px 0 5px;color:var(--muted);font-size:11px">Estimated net</div><div class="net">₹${Math.round(b.net)} <small style="font-size:11px;color:var(--muted)">/unit</small></div><button class="cta" style="margin-top:12px" onclick="requestDeal('${b.name.replace(/'/g,"\\'")}','${l.crop}',${Math.round(b.net)})">Contact buyer</button></div>`).join(""):`<div class="empty">No matching demo buyer found within your selected distance. Try increasing the distance.</div>`;
+}
+function requestDeal(name,crop,net){deals.push({name,crop,net,status:"Pending"});localStorage.setItem("agri_deals",JSON.stringify(deals));toast("Buyer contact request sent ✓");show("chat");$("chatTitle").textContent=name}
+const FARMER_SEEDS=[
+['Ramesh Kumar','Meerut','Uttar Pradesh','Wheat · Sugarcane'],['Sita Devi FPO','Nashik','Maharashtra','Onion · Grapes'],['Green Valley Farmers','Karnal','Haryana','Rice · Maize'],['Kisan Pragati Group','Indore','Madhya Pradesh','Soybean · Wheat'],['Amit Yadav','Muzaffarnagar','Uttar Pradesh','Sugarcane · Wheat'],['Pooja Patil','Pune','Maharashtra','Onion · Tomato'],['Harpreet Singh','Ludhiana','Punjab','Wheat · Maize'],['Rajesh Meena','Kota','Rajasthan','Mustard · Coriander'],['Sunita Sharma','Jaipur','Rajasthan','Bajra · Mustard'],['Vijay Verma','Agra','Uttar Pradesh','Potato · Wheat'],['Mohan Lal','Hisar','Haryana','Cotton · Wheat'],['Kavita Pawar','Nashik','Maharashtra','Grapes · Onion'],['Deepak Saini','Bulandshahr','Uttar Pradesh','Potato · Wheat'],['Neha FPO','Nagpur','Maharashtra','Orange · Soybean'],['Gurpreet Kaur','Amritsar','Punjab','Wheat · Paddy'],['Suresh Jat','Bharatpur','Rajasthan','Mustard · Bajra'],['Anil Kumar','Panipat','Haryana','Wheat · Rice'],['Meena Devi','Alwar','Rajasthan','Mustard · Gram'],['Rahul Chaudhary','Bijnor','Uttar Pradesh','Sugarcane · Wheat'],['Nitin Pal','Hapur','Uttar Pradesh','Potato · Tomato'],['Shweta Farmers Group','Sangli','Maharashtra','Grapes · Sugarcane'],['Manoj Thakur','Shimla','Himachal Pradesh','Apple · Maize'],['Kiran FPO','Ahmednagar','Maharashtra','Onion · Bajra'],['Arjun Singh','Rohtak','Haryana','Wheat · Mustard'],['Rekha Devi','Mathura','Uttar Pradesh','Potato · Wheat'],['Dinesh Gurjar','Alwar','Rajasthan','Bajra · Mustard'],['Naveen Kumar','Sonipat','Haryana','Wheat · Paddy'],['Asha Devi','Bareilly','Uttar Pradesh','Rice · Wheat'],['Ravi FPO','Nanded','Maharashtra','Soybean · Cotton'],['Sanjay Patel','Indore','Madhya Pradesh','Soybean · Maize'],['Priya Agri Group','Bhopal','Madhya Pradesh','Wheat · Soybean'],['Mahesh Yadav','Etawah','Uttar Pradesh','Potato · Wheat'],['Komal Sharma','Ajmer','Rajasthan','Coriander · Mustard'],['Baldev Singh','Patiala','Punjab','Wheat · Paddy'],['Anita Devi','Gorakhpur','Uttar Pradesh','Rice · Maize'],['Kunal FPO','Aurangabad','Maharashtra','Cotton · Soybean'],['Rohit Kumar','Meerut','Uttar Pradesh','Potato · Sugarcane'],['Shivam Singh','Shamli','Uttar Pradesh','Sugarcane · Wheat'],['Manju Devi','Aligarh','Uttar Pradesh','Potato · Wheat'],['Vikas Malik','Karnal','Haryana','Rice · Wheat'],['Pardeep Singh','Bathinda','Punjab','Cotton · Wheat'],['Nisha Patil','Kolhapur','Maharashtra','Sugarcane · Grapes'],['Yogesh Jat','Sikar','Rajasthan','Bajra · Mustard'],['Sohan Lal','Bikaner','Rajasthan','Bajra · Groundnut'],['Faisal Khan','Meerut','Uttar Pradesh','Vegetables · Wheat'],['Isha FPO','Solapur','Maharashtra','Onion · Pomegranate'],['Mukesh Sharma','Moradabad','Uttar Pradesh','Mentha · Wheat'],['Geeta Devi','Firozabad','Uttar Pradesh','Potato · Vegetables'],['Tarun Kumar','Ambala','Haryana','Wheat · Maize'],['Rakesh FPO','Jalgaon','Maharashtra','Banana · Cotton'],['Preeti Singh','Dehradun','Uttarakhand','Basmati Rice · Vegetables'],['Lokesh Gurjar','Kota','Rajasthan','Wheat · Mustard'],['Pankaj Yadav','Baghpat','Uttar Pradesh','Sugarcane · Wheat'],['Monika Devi','Varanasi','Uttar Pradesh','Rice · Vegetables'],['Ajay Singh','Fatehpur','Uttar Pradesh','Wheat · Pulses'],['Kamaljeet Singh','Jalandhar','Punjab','Wheat · Paddy'],['Suman FPO','Satara','Maharashtra','Onion · Tomato'],['Dheeraj Kumar','Meerut','Uttar Pradesh','Wheat · Potato'],['Ritu Sharma','Agra','Uttar Pradesh','Potato · Mustard'],['Naresh Kumar','Panipat','Haryana','Wheat · Rice']
+];
+const DEMO_CONTACTS=FARMER_SEEDS.map((x,i)=>({...{name:x[0],city:x[1],state:x[2],crops:x[3]},phone:'XXXXXX'+String(1000+i).slice(-4),email:'farmer'+(i+1)+'@demo.agriwise.local',online:i%4!==0,rating:(4.2+(i%8)/10).toFixed(1)}));
+function showFarmerContact(i){const f=DEMO_CONTACTS[i];show('chat');$('chatTitle').textContent=f.name;$('messages').innerHTML=`<div class="card"><b>Farmer contact</b><div style="margin-top:8px">📍 ${f.city}, ${f.state}</div><div>🌾 ${f.crops}</div><div>📞 ${f.phone} <span class="badge">Demo contact</span></div><div>✉️ ${f.email}</div><div style="font-size:11px;color:var(--muted);margin-top:8px">This is a demo marketplace profile. Real farmer contact data should come from verified users who opt in.</div></div>`;}
+function renderFarmers(){
+ const q=($('farmerSearch').value||'').toLowerCase();
+ const demo=DEMO_CONTACTS.filter(f=>(f.name+' '+f.city+' '+f.state+' '+f.crops).toLowerCase().includes(q));
+ $('farmersList').innerHTML=`<div class="notice">👨‍🌾 ${DEMO_CONTACTS.length}+ farmer profiles loaded in this demo. Contact numbers are intentionally masked; real contacts should be supplied by verified, opted-in users.</div>`+demo.map((f,i)=>{const idx=DEMO_CONTACTS.indexOf(f);return `<div class="listcard"><div style="width:58px;height:58px;border-radius:16px;background:#d9f5e5;display:grid;place-items:center;font-size:27px">🧑‍🌾</div><div class="grow"><div style="display:flex;gap:7px;align-items:center"><b>${f.name}</b><span class="badge">${f.online?'● Online':'Offline'}</span></div><div style="font-size:11px;color:var(--muted);margin-top:5px">📍 ${f.city}, ${f.state} · 🌾 ${f.crops}</div><div style="font-size:11px;margin-top:5px">⭐ ${f.rating} · 📞 ${f.phone}</div><button class="pill" style="margin-top:8px" onclick="showFarmerContact(${idx})">📇 View contact & chat</button></div></div>`}).join('');
+}
+
+function renderChat(){$("messages").innerHTML=messages.map(m=>`<div class="msg ${m.me?'me':''}">${m.text}</div>`).join("");$("messages").scrollTop=$("messages").scrollHeight}
+function sendMsg(){const i=$("chatInput"),v=i.value.trim();if(!v)return;messages.push({me:true,text:v});localStorage.setItem("agri_messages",JSON.stringify(messages));i.value="";renderChat();}
+const I18N={
+"English":{
+"Home":"Home","Market":"Market","List":"List","Listings":"Listings","Profile":"Profile","Market intelligence":"Market intelligence","List your crop":"List your crop","My marketplace listings":"My marketplace listings","Buyer matches":"Buyer matches","Farmer profile":"Farmer profile","Find farmers":"Find farmers","Communication":"Communication","Agriwise settings":"Agriwise settings","Appearance":"Appearance","Premium dark mode for low-light use.":"Premium dark mode for low-light use.","Language":"Language","One account, one marketplace":"One account, one marketplace","Farmers and buyers can both explore, list crops/products and connect.":"Farmers and buyers can both explore, list crops/products and connect.","Marketplace":"Marketplace","List crop / product":"List crop / product","Market intelligence":"Market intelligence","Find people":"Find people","Search farmers":"Search farmers","View contact & chat":"View contact & chat","Contact buyer":"Contact buyer","Edit":"Edit","Delete":"Delete","Match":"Match","Save listing changes ✓":"Save listing changes ✓","Send OTP & continue":"Send OTP & continue","Mobile number":"Mobile number","secure demo access":"secure demo access","Type a message...":"Type a message...","Send":"Send","Farmer contact":"Farmer contact","Demo contact":"Demo contact","Online":"Online","Offline":"Offline","Price":"Price","Price trend":"Price trend","Analysis":"Analysis","Live price graph":"Live price graph","per kg":"per kg","₹/kg":"₹/kg","Quantity":"Quantity","kg":"kg","Expected price":"Expected price","Minimum order":"Minimum order","Harvest date":"Harvest date","Delivery option":"Delivery option","Negotiable":"Negotiable","Fixed":"Fixed","Add listing":"Add listing","Save listing":"Save listing"},
+"हिन्दी":{"Home":"होम","Market":"बाज़ार","List":"लिस्ट करें","Listings":"लिस्टिंग्स","Profile":"प्रोफ़ाइल","Market intelligence":"बाज़ार विश्लेषण","List your crop":"अपनी फसल लिस्ट करें","My marketplace listings":"मेरी मार्केटप्लेस लिस्टिंग्स","Buyer matches":"खरीदार मैच","Farmer profile":"किसान प्रोफ़ाइल","Find farmers":"किसान खोजें","Communication":"संचार","Agriwise settings":"Agriwise सेटिंग्स","Appearance":"दिखावट","Premium dark mode for low-light use.":"कम रोशनी में उपयोग के लिए प्रीमियम डार्क मोड।","Language":"भाषा","One account, one marketplace":"एक अकाउंट, एक मार्केटप्लेस","Farmers and buyers can both explore, list crops/products and connect.":"किसान और खरीदार दोनों फसल/प्रोडक्ट देख, लिस्ट और आपस में जुड़ सकते हैं।","Marketplace":"मार्केटप्लेस","List crop / product":"फसल / प्रोडक्ट लिस्ट करें","Market intelligence":"बाज़ार विश्लेषण","Find people":"लोग खोजें","Search farmers":"किसान खोजें","View contact & chat":"कॉन्टैक्ट और चैट देखें","Contact buyer":"खरीदार से संपर्क करें","Edit":"एडिट","Delete":"डिलीट","Match":"मैच","Save listing changes ✓":"लिस्टिंग बदलाव सेव करें ✓","Send OTP & continue":"OTP भेजें और जारी रखें","Mobile number":"मोबाइल नंबर","secure demo access":"सुरक्षित डेमो एक्सेस","Type a message...":"मैसेज लिखें...","Send":"भेजें","Farmer contact":"किसान संपर्क","Demo contact":"डेमो संपर्क","Online":"ऑनलाइन","Offline":"ऑफलाइन","Price":"कीमत","Price trend":"कीमत ट्रेंड","Analysis":"विश्लेषण","Live price graph":"लाइव कीमत ग्राफ","per kg":"प्रति किलो","Quantity":"मात्रा","Expected price":"अपेक्षित कीमत","Minimum order":"न्यूनतम ऑर्डर","Harvest date":"कटाई की तारीख","Delivery option":"डिलीवरी विकल्प","Negotiable":"बातचीत योग्य","Fixed":"निश्चित","Add listing":"लिस्टिंग जोड़ें","Save listing":"लिस्टिंग सेव करें"},
+"বাংলা":{"Home":"হোম","Market":"বাজার","List":"তালিকা করুন","Listings":"তালিকা","Profile":"প্রোফাইল","Market intelligence":"বাজার বিশ্লেষণ","List your crop":"আপনার ফসল তালিকাভুক্ত করুন","My marketplace listings":"আমার মার্কেটপ্লেস তালিকা","Buyer matches":"ক্রেতা ম্যাচ","Farmer profile":"কৃষক প্রোফাইল","Find farmers":"কৃষক খুঁজুন","Communication":"যোগাযোগ","Agriwise settings":"Agriwise সেটিংস","Appearance":"চেহারা","Premium dark mode for low-light use.":"কম আলোতে ব্যবহারের জন্য প্রিমিয়াম ডার্ক মোড।","Language":"ভাষা","One account, one marketplace":"এক অ্যাকাউন্ট, এক মার্কেটপ্লেস","Farmers and buyers can both explore, list crops/products and connect.":"কৃষক ও ক্রেতা উভয়েই ফসল/পণ্য দেখতে, তালিকাভুক্ত করতে এবং সংযোগ করতে পারবেন।","Marketplace":"মার্কেটপ্লেস","List crop / product":"ফসল / পণ্য তালিকাভুক্ত করুন","Find people":"মানুষ খুঁজুন","Search farmers":"কৃষক খুঁজুন","View contact & chat":"যোগাযোগ ও চ্যাট দেখুন","Contact buyer":"ক্রেতার সাথে যোগাযোগ","Edit":"সম্পাদনা","Delete":"মুছুন","Match":"ম্যাচ","Send OTP & continue":"OTP পাঠিয়ে চালিয়ে যান","Mobile number":"মোবাইল নম্বর","Type a message...":"বার্তা লিখুন...","Farmer contact":"কৃষক যোগাযোগ","Demo contact":"ডেমো যোগাযোগ","Online":"অনলাইন","Offline":"অফলাইন","Price":"দাম","Price trend":"দামের প্রবণতা","Analysis":"বিশ্লেষণ","Live price graph":"লাইভ দামের গ্রাফ","per kg":"প্রতি কেজি","Quantity":"পরিমাণ","Expected price":"প্রত্যাশিত দাম","Minimum order":"ন্যূনতম অর্ডার","Harvest date":"ফসল কাটার তারিখ","Delivery option":"ডেলিভারি বিকল্প","Negotiable":"আলোচনাযোগ্য","Fixed":"নির্দিষ্ট","Add listing":"তালিকা যোগ করুন","Save listing":"তালিকা সংরক্ষণ করুন"},
+"తెలుగు":{"Home":"హోమ్","Market":"మార్కెట్","List":"లిస్ట్ చేయండి","Listings":"లిస్టింగ్‌లు","Profile":"ప్రొఫైల్","Market intelligence":"మార్కెట్ విశ్లేషణ","List your crop":"మీ పంటను లిస్ట్ చేయండి","My marketplace listings":"నా మార్కెట్‌ప్లేస్ లిస్టింగ్‌లు","Buyer matches":"కొనుగోలుదారు మ్యాచ్‌లు","Farmer profile":"రైతు ప్రొఫైల్","Find farmers":"రైతులను కనుగొనండి","Communication":"సంప్రదింపు","Agriwise settings":"Agriwise సెట్టింగ్స్","Appearance":"రూపం","Language":"భాష","Marketplace":"మార్కెట్‌ప్లేస్","List crop / product":"పంట / ఉత్పత్తిని లిస్ట్ చేయండి","Find people":"వ్యక్తులను కనుగొనండి","Search farmers":"రైతులను వెతకండి","View contact & chat":"కాంటాక్ట్ & చాట్ చూడండి","Contact buyer":"కొనుగోలుదారుని సంప్రదించండి","Edit":"ఎడిట్","Delete":"తొలగించు","Match":"మ్యాచ్","Send OTP & continue":"OTP పంపి కొనసాగండి","Mobile number":"మొబైల్ నంబర్","Type a message...":"మెసేజ్ టైప్ చేయండి...","Farmer contact":"రైతు సంప్రదింపు","Demo contact":"డెమో సంప్రదింపు","Online":"ఆన్‌లైన్","Offline":"ఆఫ్‌లైన్","Price":"ధర","Price trend":"ధర ట్రెండ్","Analysis":"విశ్లేషణ","Live price graph":"లైవ్ ధర గ్రాఫ్","per kg":"కిలోకు","Quantity":"పరిమాణం","Expected price":"అంచనా ధర","Minimum order":"కనిష్ట ఆర్డర్","Harvest date":"కోత తేదీ","Delivery option":"డెలివరీ ఎంపిక","Negotiable":"చర్చించవచ్చు","Fixed":"స్థిరమైన","Add listing":"లిస్టింగ్ జోడించండి","Save listing":"లిస్టింగ్ సేవ్ చేయండి"},
+"मराठी":{"Home":"होम","Market":"बाजार","List":"लिस्ट करा","Listings":"लिस्टिंग्ज","Profile":"प्रोफाइल","Market intelligence":"बाजार विश्लेषण","List your crop":"तुमचे पीक लिस्ट करा","My marketplace listings":"माझ्या मार्केटप्लेस लिस्टिंग्ज","Buyer matches":"खरेदीदार जुळणी","Farmer profile":"शेतकरी प्रोफाइल","Find farmers":"शेतकरी शोधा","Communication":"संवाद","Agriwise settings":"Agriwise सेटिंग्ज","Appearance":"दिसणे","Language":"भाषा","Marketplace":"मार्केटप्लेस","List crop / product":"पीक / उत्पादन लिस्ट करा","Find people":"लोक शोधा","Search farmers":"शेतकरी शोधा","View contact & chat":"कॉन्टॅक्ट आणि चॅट पहा","Contact buyer":"खरेदीदाराशी संपर्क","Edit":"संपादित करा","Delete":"हटवा","Match":"जुळणी","Send OTP & continue":"OTP पाठवा आणि पुढे जा","Mobile number":"मोबाइल नंबर","Type a message...":"मेसेज टाइप करा...","Farmer contact":"शेतकरी संपर्क","Demo contact":"डेमो संपर्क","Online":"ऑनलाइन","Offline":"ऑफलाइन","Price":"किंमत","Price trend":"किंमत ट्रेंड","Analysis":"विश्लेषण","Live price graph":"लाइव्ह किंमत ग्राफ","per kg":"प्रति किलो","Quantity":"प्रमाण","Expected price":"अपेक्षित किंमत","Minimum order":"किमान ऑर्डर","Harvest date":"कापणीची तारीख","Delivery option":"डिलिव्हरी पर्याय","Negotiable":"चर्चा करण्यायोग्य","Fixed":"निश्चित","Add listing":"लिस्टिंग जोडा","Save listing":"लिस्टिंग सेव्ह करा"},
+"தமிழ்":{"Home":"முகப்பு","Market":"சந்தை","List":"பட்டியலிடு","Listings":"பட்டியல்கள்","Profile":"சுயவிவரம்","Market intelligence":"சந்தை பகுப்பாய்வு","List your crop":"உங்கள் பயிரை பட்டியலிடுங்கள்","My marketplace listings":"எனது சந்தை பட்டியல்கள்","Buyer matches":"வாங்குபவர் பொருத்தங்கள்","Farmer profile":"விவசாயி சுயவிவரம்","Find farmers":"விவசாயிகளைத் தேடுங்கள்","Communication":"தொடர்பு","Agriwise settings":"Agriwise அமைப்புகள்","Appearance":"தோற்றம்","Language":"மொழி","Marketplace":"சந்தை","List crop / product":"பயிர் / பொருளை பட்டியலிடு","Find people":"மக்களைத் தேடு","Search farmers":"விவசாயிகளைத் தேடு","View contact & chat":"தொடர்பு மற்றும் அரட்டை பார்க்கவும்","Contact buyer":"வாங்குபவரை தொடர்புகொள்ளவும்","Edit":"திருத்து","Delete":"நீக்கு","Match":"பொருத்தம்","Send OTP & continue":"OTP அனுப்பி தொடரவும்","Mobile number":"மொபைல் எண்","Type a message...":"செய்தியை உள்ளிடவும்...","Farmer contact":"விவசாயி தொடர்பு","Demo contact":"டெமோ தொடர்பு","Online":"ஆன்லைன்","Offline":"ஆஃப்லைன்","Price":"விலை","Price trend":"விலை போக்கு","Analysis":"பகுப்பாய்வு","Live price graph":"நேரடி விலை வரைபடம்","per kg":"ஒரு கிலோக்கு","Quantity":"அளவு","Expected price":"எதிர்பார்க்கப்படும் விலை","Minimum order":"குறைந்தபட்ச ஆர்டர்","Harvest date":"அறுவடை தேதி","Delivery option":"டெலிவரி விருப்பம்","Negotiable":"பேச்சுவார்த்தை செய்யலாம்","Fixed":"நிலையான","Add listing":"பட்டியல் சேர்க்கவும்","Save listing":"பட்டியலை சேமிக்கவும்"},
+"ગુજરાતી":{"Home":"હોમ","Market":"બજાર","List":"લિસ્ટ કરો","Listings":"લિસ્ટિંગ્સ","Profile":"પ્રોફાઇલ","Market intelligence":"બજાર વિશ્લેષણ","List your crop":"તમારો પાક લિસ્ટ કરો","My marketplace listings":"મારી માર્કેટપ્લેસ લિસ્ટિંગ્સ","Buyer matches":"ખરીદદાર મેચ","Farmer profile":"ખેડૂત પ્રોફાઇલ","Find farmers":"ખેડૂત શોધો","Communication":"સંચાર","Agriwise settings":"Agriwise સેટિંગ્સ","Appearance":"દેખાવ","Language":"ભાષા","Marketplace":"માર્કેટપ્લેસ","List crop / product":"પાક / પ્રોડક્ટ લિસ્ટ કરો","Find people":"લોકો શોધો","Search farmers":"ખેડૂત શોધો","View contact & chat":"કૉન્ટેક્ટ અને ચેટ જુઓ","Contact buyer":"ખરીદદારનો સંપર્ક કરો","Edit":"ફેરફાર","Delete":"કાઢી નાખો","Match":"મેચ","Send OTP & continue":"OTP મોકલો અને ચાલુ રાખો","Mobile number":"મોબાઇલ નંબર","Type a message...":"મેસેજ લખો...","Farmer contact":"ખેડૂત સંપર્ક","Demo contact":"ડેમો સંપર્ક","Online":"ઓનલાઇન","Offline":"ઓફલાઇન","Price":"કિંમત","Price trend":"કિંમત ટ્રેન્ડ","Analysis":"વિશ્લેષણ","Live price graph":"લાઇવ કિંમત ગ્રાફ","per kg":"કિલો દીઠ","Quantity":"જથ્થો","Expected price":"અપેક્ષિત કિંમત","Minimum order":"ન્યૂનતમ ઓર્ડર","Harvest date":"લણણી તારીખ","Delivery option":"ડિલિવરી વિકલ્પ","Negotiable":"વાટાઘાટ કરી શકાય","Fixed":"નિશ્ચિત","Add listing":"લિસ્ટિંગ ઉમેરો","Save listing":"લિસ્ટિંગ સેવ કરો"},
+"ಕನ್ನಡ":{"Home":"ಮುಖಪುಟ","Market":"ಮಾರುಕಟ್ಟೆ","List":"ಪಟ್ಟಿ ಮಾಡಿ","Listings":"ಪಟ್ಟಿಗಳು","Profile":"ಪ್ರೊಫೈಲ್","Market intelligence":"ಮಾರುಕಟ್ಟೆ ವಿಶ್ಲೇಷಣೆ","List your crop":"ನಿಮ್ಮ ಬೆಳೆಯನ್ನು ಪಟ್ಟಿ ಮಾಡಿ","My marketplace listings":"ನನ್ನ ಮಾರುಕಟ್ಟೆ ಪಟ್ಟಿಗಳು","Buyer matches":"ಖರೀದಿದಾರರ ಹೊಂದಾಣಿಕೆ","Farmer profile":"ರೈತ ಪ್ರೊಫೈಲ್","Find farmers":"ರೈತರನ್ನು ಹುಡುಕಿ","Communication":"ಸಂಪರ್ಕ","Agriwise settings":"Agriwise ಸೆಟ್ಟಿಂಗ್ಸ್","Appearance":"ನೋಟ","Language":"ಭಾಷೆ","Marketplace":"ಮಾರುಕಟ್ಟೆ","List crop / product":"ಬೆಳೆ / ಉತ್ಪನ್ನ ಪಟ್ಟಿ ಮಾಡಿ","Find people":"ಜನರನ್ನು ಹುಡುಕಿ","Search farmers":"ರೈತರನ್ನು ಹುಡುಕಿ","View contact & chat":"ಸಂಪರ್ಕ ಮತ್ತು ಚಾಟ್ ನೋಡಿ","Contact buyer":"ಖರೀದಿದಾರರನ್ನು ಸಂಪರ್ಕಿಸಿ","Edit":"ತಿದ್ದು","Delete":"ಅಳಿಸಿ","Match":"ಹೊಂದಾಣಿಕೆ","Send OTP & continue":"OTP ಕಳುಹಿಸಿ ಮುಂದುವರಿಸಿ","Mobile number":"ಮೊಬೈಲ್ ಸಂಖ್ಯೆ","Type a message...":"ಸಂದೇಶ ಟೈಪ್ ಮಾಡಿ...","Farmer contact":"ರೈತ ಸಂಪರ್ಕ","Demo contact":"ಡೆಮೋ ಸಂಪರ್ಕ","Online":"ಆನ್‌ಲೈನ್","Offline":"ಆಫ್‌ಲೈನ್","Price":"ಬೆಲೆ","Price trend":"ಬೆಲೆ ಟ್ರೆಂಡ್","Analysis":"ವಿಶ್ಲೇಷಣೆ","Live price graph":"ಲೈವ್ ಬೆಲೆ ಗ್ರಾಫ್","per kg":"ಪ್ರತಿ ಕೆಜಿ","Quantity":"ಪ್ರಮಾಣ","Expected price":"ನಿರೀಕ್ಷಿತ ಬೆಲೆ","Minimum order":"ಕನಿಷ್ಠ ಆರ್ಡರ್","Harvest date":"ಕೊಯ್ಲು ದಿನಾಂಕ","Delivery option":"ವಿತರಣಾ ಆಯ್ಕೆ","Negotiable":"ಚರ್ಚಿಸಬಹುದು","Fixed":"ಸ್ಥಿರ","Add listing":"ಪಟ್ಟಿ ಸೇರಿಸಿ","Save listing":"ಪಟ್ಟಿ ಉಳಿಸಿ"},
+"മലയാളം":{"Home":"ഹോം","Market":"വിപണി","List":"ലിസ്റ്റ് ചെയ്യുക","Listings":"ലിസ്റ്റിംഗുകൾ","Profile":"പ്രൊഫൈൽ","Market intelligence":"വിപണി വിശകലനം","List your crop":"നിങ്ങളുടെ വിള ലിസ്റ്റ് ചെയ്യുക","My marketplace listings":"എന്റെ മാർക്കറ്റ്‌പ്ലേസ് ലിസ്റ്റിംഗുകൾ","Buyer matches":"വാങ്ങുന്നയാളുടെ പൊരുത്തങ്ങൾ","Farmer profile":"കർഷക പ്രൊഫൈൽ","Find farmers":"കർഷകരെ കണ്ടെത്തുക","Communication":"ആശയവിനിമയം","Agriwise settings":"Agriwise സെറ്റിംഗ്സ്","Appearance":"രൂപം","Language":"ഭാഷ","Marketplace":"മാർക്കറ്റ്‌പ്ലേസ്","List crop / product":"വിള / ഉൽപ്പന്നം ലിസ്റ്റ് ചെയ്യുക","Find people":"ആളുകളെ കണ്ടെത്തുക","Search farmers":"കർഷകരെ തിരയുക","View contact & chat":"കോൺടാക്റ്റും ചാറ്റും കാണുക","Contact buyer":"വാങ്ങുന്നയാളെ ബന്ധപ്പെടുക","Edit":"തിരുത്തുക","Delete":"ഇല്ലാതാക്കുക","Match":"പൊരുത്തം","Send OTP & continue":"OTP അയച്ച് തുടരുക","Mobile number":"മൊബൈൽ നമ്പർ","Type a message...":"സന്ദേശം ടൈപ്പ് ചെയ്യുക...","Farmer contact":"കർഷക ബന്ധപ്പെടൽ","Demo contact":"ഡെമോ കോൺടാക്റ്റ്","Online":"ഓൺലൈൻ","Offline":"ഓഫ്‌ലൈൻ","Price":"വില","Price trend":"വില ട്രെൻഡ്","Analysis":"വിശകലനം","Live price graph":"ലൈവ് വില ഗ്രാഫ്","per kg":"കിലോയ്ക്ക്","Quantity":"അളവ്","Expected price":"പ്രതീക്ഷിക്കുന്ന വില","Minimum order":"കുറഞ്ഞ ഓർഡർ","Harvest date":"വിളവെടുപ്പ് തീയതി","Delivery option":"ഡെലിവറി ഓപ്ഷൻ","Negotiable":"ചർച്ച ചെയ്യാം","Fixed":"സ്ഥിരം","Add listing":"ലിസ്റ്റിംഗ് ചേർക്കുക","Save listing":"ലിസ്റ്റിംഗ് സേവ് ചെയ്യുക"},
+"ਪੰਜਾਬੀ":{"Home":"ਹੋਮ","Market":"ਮੰਡੀ","List":"ਲਿਸਟ ਕਰੋ","Listings":"ਲਿਸਟਿੰਗਾਂ","Profile":"ਪ੍ਰੋਫਾਈਲ","Market intelligence":"ਮੰਡੀ ਵਿਸ਼ਲੇਸ਼ਣ","List your crop":"ਆਪਣੀ ਫਸਲ ਲਿਸਟ ਕਰੋ","My marketplace listings":"ਮੇਰੀਆਂ ਮਾਰਕੀਟਪਲੇਸ ਲਿਸਟਿੰਗਾਂ","Buyer matches":"ਖਰੀਦਦਾਰ ਮੇਲ","Farmer profile":"ਕਿਸਾਨ ਪ੍ਰੋਫਾਈਲ","Find farmers":"ਕਿਸਾਨ ਲੱਭੋ","Communication":"ਸੰਚਾਰ","Agriwise settings":"Agriwise ਸੈਟਿੰਗਾਂ","Appearance":"ਦਿੱਖ","Language":"ਭਾਸ਼ਾ","Marketplace":"ਮਾਰਕੀਟਪਲੇਸ","List crop / product":"ਫਸਲ / ਉਤਪਾਦ ਲਿਸਟ ਕਰੋ","Find people":"ਲੋਕ ਲੱਭੋ","Search farmers":"ਕਿਸਾਨ ਲੱਭੋ","View contact & chat":"ਸੰਪਰਕ ਅਤੇ ਚੈਟ ਵੇਖੋ","Contact buyer":"ਖਰੀਦਦਾਰ ਨਾਲ ਸੰਪਰਕ","Edit":"ਸੋਧੋ","Delete":"ਮਿਟਾਓ","Match":"ਮੇਲ","Send OTP & continue":"OTP ਭੇਜੋ ਅਤੇ ਜਾਰੀ ਰੱਖੋ","Mobile number":"ਮੋਬਾਈਲ ਨੰਬਰ","Type a message...":"ਸੁਨੇਹਾ ਲਿਖੋ...","Farmer contact":"ਕਿਸਾਨ ਸੰਪਰਕ","Demo contact":"ਡੈਮੋ ਸੰਪਰਕ","Online":"ਆਨਲਾਈਨ","Offline":"ਆਫਲਾਈਨ","Price":"ਕੀਮਤ","Price trend":"ਕੀਮਤ ਰੁਝਾਨ","Analysis":"ਵਿਸ਼ਲੇਸ਼ਣ","Live price graph":"ਲਾਈਵ ਕੀਮਤ ਗ੍ਰਾਫ","per kg":"ਪ੍ਰਤੀ ਕਿਲੋ","Quantity":"ਮਾਤਰਾ","Expected price":"ਉਮੀਦ ਕੀਤੀ ਕੀਮਤ","Minimum order":"ਘੱਟੋ-ਘੱਟ ਆਰਡਰ","Harvest date":"ਵਾਢੀ ਦੀ ਤਾਰੀਖ","Delivery option":"ਡਿਲਿਵਰੀ ਵਿਕਲਪ","Negotiable":"ਗੱਲਬਾਤਯੋਗ","Fixed":"ਨਿਸ਼ਚਿਤ","Add listing":"ਲਿਸਟਿੰਗ ਸ਼ਾਮਲ ਕਰੋ","Save listing":"ਲਿਸਟਿੰਗ ਸੇਵ ਕਰੋ"}
+};
+const I18N_KEYS={};Object.values(I18N).forEach(m=>Object.keys(m).forEach(k=>I18N_KEYS[k]=1));
+const originalText=new WeakMap();
+function applyLanguage(lang){const map=I18N[lang]||I18N.English;document.documentElement.lang=({"हिन्दी":"hi","বাংলা":"bn","తెలుగు":"te","मराठी":"mr","தமிழ்":"ta","ગુજરાતી":"gu","ಕನ್ನಡ":"kn","മലയാളം":"ml","ਪੰਜਾਬੀ":"pa"}[lang]||"en");
+ document.querySelectorAll('[data-i18n]').forEach(el=>{const key=el.getAttribute('data-i18n');el.textContent=map[key]||key});
+ document.querySelectorAll('input[placeholder],textarea[placeholder]').forEach(el=>{if(!originalText.has(el))originalText.set(el,el.placeholder);const k=originalText.get(el);el.placeholder=map[k]||k});
+ document.querySelectorAll('button,option,label,h1,h2,h3,h4,p,b,span,div').forEach(el=>{if(el.children.length) return; const raw=originalText.has(el)?originalText.get(el):el.textContent.trim(); if(!originalText.has(el))originalText.set(el,raw); if(raw && map[raw]) el.textContent=map[raw];});
+ const sel=document.getElementById('languageSelect');if(sel)sel.value=lang;document.querySelectorAll('#langbar button').forEach(b=>{b.classList.toggle('active',b.textContent===lang||b.dataset.lang===lang)});
+ localStorage.setItem('agri_lang',lang);
+}
+function setLang(l,btn){applyLanguage(l);toast((I18N[l]?.Language||"Language")+" ✓");}
+function setLangSelect(l){applyLanguage(l);toast("✓ "+l);}
+function initLanguages(){const bar=document.getElementById('langbar');if(!bar)return;bar.innerHTML=LANGS.map(l=>`<button type="button" data-lang="${l}" onclick="setLang('${l}',this)">${l}</button>`).join('');applyLanguage(localStorage.getItem('agri_lang')||'English');}
+setTimeout(initLanguages,0);
+
+function setStateDistrictForForm(){}
+// Unified Agriwise account: no Farmer/Buyer role split.
+role="user";
+localStorage.setItem("agri_role","user");
+function pickRole(){ return true; }
+function sendOTP(resend=false){
+ const p=$("loginPhone").value.replace(/\D/g,"");
+ if(p.length!==10)return toast("Enter a valid 10-digit mobile number.");
+ pendingPhone=p;pendingRole="user";role="user";
+ otpCode=String(Math.floor(100000+Math.random()*900000));
+ localStorage.setItem("agri_pending_phone",p);localStorage.setItem("agri_pending_role","user");localStorage.setItem("agri_otp",otpCode);
+ $("otpPhone").textContent="+91 "+p.slice(0,5)+"*****";$("otpInput").value="";
+ $("otpStatus").innerHTML=(resend?"New OTP generated. ":"OTP generated. ")+"<b>Demo OTP: "+otpCode+"</b>";
+ show("otp");
+}
+function verifyOTP(){
+ const entered=$("otpInput").value.replace(/\D/g,""),saved=localStorage.getItem("agri_otp")||otpCode;
+ if(entered.length!==6)return toast("Enter the 6-digit OTP.");
+ if(entered!==saved)return toast("Incorrect OTP. Please try again.");
+ const p=pendingPhone||localStorage.getItem("agri_pending_phone")||"";
+ profile={...profile,phone:p,role:"user",verified:true};saveProfile();
+ localStorage.setItem("agri_role","user");localStorage.setItem("agri_verified","1");localStorage.removeItem("agri_otp");
+ toast("Mobile verified successfully ✓");setTimeout(()=>show("home"),250);
+}
+// Navigation safety: any element carrying data-screen opens that screen without depending on inline handlers.
+document.addEventListener("click", function(e){
+  const el=e.target.closest("[data-screen]");
+  if(el){ e.preventDefault(); show(el.dataset.screen); }
+});
+window.addEventListener("hashchange", function(){
+  const id=location.hash.slice(1);
+  if(id && document.getElementById(id)) show(id);
+});
+
+fillSelects();pickRole();setDark(localStorage.getItem("agri_dark")==="1");
+if(profile.phone) $("loginPhone").value=profile.phone;
+role="user";
+if(localStorage.getItem("agri_verified")!=="1"){ show("splash"); } else { renderHome(); }
+
+function initUnifiedProfile(){try{loadDistricts('pState','pDistrict'); if(typeof renderCropGrid==='function'){renderCropGrid('profileCrops');renderCropGrid('buyerCrops2');}}catch(e){}}
+setTimeout(initUnifiedProfile,300);
+</script>
+
+<script id="people-buyer-upgrade">
+(function(){
+const BUYER_SEEDS=[
+['AgroFresh Foods Pvt Ltd','Processor','Wheat, Tomato, Potato','Delhi NCR'],['Shree Ganesh Traders','Trader','Wheat, Rice, Onion','Meerut, UP'],['Maharashtra Grain Hub','Wholesaler','Wheat, Soybean, Maize','Pune, MH'],['KisanMart Retail','Retailer','Vegetables, Fruits','Lucknow, UP'],['Bharat Agro Exports','Exporter','Rice, Onion, Mango','Mumbai, MH'],['National Food Supply','Institutional Buyer','Rice, Wheat, Pulses','Delhi'],['GreenField Foods','Processor','Tomato, Potato, Peas','Nashik, MH'],['Sahyadri Agri Trade','Trader','Grapes, Onion, Pomegranate','Nashik, MH'],['Punjab Harvest Co.','Wholesaler','Wheat, Maize, Rice','Ludhiana, PB'],['Deccan Fresh Buyers','Retailer','Fruits, Vegetables','Hyderabad, TS'],['Eastern Grain Link','Exporter','Rice, Maize, Pulses','Kolkata, WB'],['Bharat Institutional Foods','Institutional Buyer','Wheat, Rice, Vegetables','Jaipur, RJ']
+];
+window.BUYER_SEEDS=BUYER_SEEDS;
+window.getPeopleMode=function(){const p=JSON.parse(localStorage.getItem('agri_profile')||'{}');return p.type==='Farmer'?'buyers':'farmers';};
+window.renderBuyerProfiles=function(container){
+ if(!container)return; container.innerHTML=BUYER_SEEDS.map((b,i)=>`<div class="find-person-card"><div class="person-avatar" style="background:linear-gradient(135deg,#1f8f4c,#b9e7c5);display:grid;place-items:center;font-size:24px">🏢</div><div class="person-info"><strong>${b[0]}</strong><div class="person-meta">${b[3]} • ${b[2]}</div><span class="person-type" style="background:#e8f6ec;color:#176b39">${b[1]}</span></div><button class="person-action" onclick="openBuyerProfile(${i})">View</button></div>`).join('');
+};
+window.openBuyerProfile=function(i){const b=BUYER_SEEDS[i]; if(window.show && document.getElementById('chat')){show('chat');} setTimeout(()=>{const box=document.querySelector('#chat .chat-box, #chat .content, #chat'); if(box)box.insertAdjacentHTML('beforeend',`<div class="card" style="margin:16px"><h3>${b[0]}</h3><p><b>Type:</b> ${b[1]}</p><p><b>Buying:</b> ${b[2]}</p><p><b>Location:</b> ${b[3]}</p><p style="opacity:.7">Demo marketplace buyer profile</p></div>`);},50);};
+})();
+</script>
+</body>
+</html>
